@@ -1,6 +1,6 @@
 NAME			=	ircserver
 
-CC				=	c++
+CC				=	c++ -g
 
 CDEBUG			=	 -Wall -Wextra -Werror -std=c++98
 
