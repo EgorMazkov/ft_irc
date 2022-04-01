@@ -4,7 +4,7 @@ CC				=	c++ -g
 
 CDEBUG			=	 -Wall -Wextra -Werror -std=c++98
 
-SRC				=	srcs/main.cpp
+SRC				=	main.cpp passwd.cpp
 
 OBJ				=	$(SRC:.cpp=.o)
 OBJ_DIR			=	./objs/
