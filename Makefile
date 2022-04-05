@@ -4,11 +4,11 @@ CC				=	c++ -g
 
 CDEBUG			=	 -Wall -Wextra -Werror -std=c++98
 
-SRC				=	main.cpp passwd.cpp
+SRC				=	Server/server.cpp
 
 OBJ				=	$(SRC:.cpp=.o)
-OBJ_DIR			=	./objs/
-OBJS			=	$(addprefix $(OBJ_DIR), $(OBJ))
+OBJ_DIR			=	../objs/
+OBJS			=	$(OBJ)
 
 all				:	$(NAME)
 
