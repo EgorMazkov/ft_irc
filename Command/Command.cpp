@@ -5,8 +5,8 @@
 
 Server serv;
 
-// void Command::passCommand(char comm, char passwd)
-// {
-// 	if (!serv.checkPassword(pass))
-// 		std::cout << "Password not" << std::endl;
-// }
+void Command::passCommand(std::string passwd, std::string passwordServer)
+{
+	if (passwd.compare(passwordServer) == 0)
+		std::cout << "Password правильный" << std::endl;
+}

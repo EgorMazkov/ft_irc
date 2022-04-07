@@ -6,25 +6,24 @@
 #include <sys/time.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
-#include <string.h>
+
+#define BUFFER_SIZE 512
 
 class Server
 {
 private:
     int port;
-    std::string pass;
-    fd_set fdAcc, fdRead, fdWrite;
+    std::string password;
 public:
 
-    static uint64_t response_timeout;
-    static uint64_t request_timeout;
 
 
 
     Server(int _port, std::string _passwd);
     void initialize(int _port, std::string& _passwd);
     void srartServer();
-    bool checkPassword(std::string passwd);
     Server();
     ~Server();
+
+
 };

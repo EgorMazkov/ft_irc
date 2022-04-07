@@ -8,5 +8,5 @@ class Command
     private:
 
     public:
-        void passCommand(char comm, char passwd);
+        void passCommand(std::string passwd, std::string passwordServer);
 };

@@ -1,4 +1,4 @@
-#include "Server/server.hpp"
+#include "server.hpp"
 
 int main(int ac, char **av)
 {
@@ -10,12 +10,13 @@ int main(int ac, char **av)
     try
     {
         int port = atoi(av[1]);
-        Server serv(port, av[2]);
-        serv.srartServer();
+        std::string pass = av[2];
+        Server serv(port, pass);
+        // serv.srartServer();
     }
-    catch(const std::exception& e)
+    catch(const char* s)
     {
-        std::cerr << e.what() << '\n';
+        std::cout << s << std::endl;
     }
     
 }
