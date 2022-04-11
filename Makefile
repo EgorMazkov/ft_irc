@@ -1,10 +1,10 @@
-NAME			=	ircserver
+NAME			=	ircserv
 
 CC				=	c++
 
 CDEBUG			=	 -Wall -Wextra -Werror -std=c++98 -g
 
-SRC				=	$(wildcard */*.cpp)
+SRC				=	$(wildcard *.cpp)
 
 OBJ				=	$(SRC:.cpp=.o)
 OBJ_DIR			=	../objs/
