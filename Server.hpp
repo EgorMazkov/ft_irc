@@ -42,7 +42,7 @@ public:
 	void initial(int portMain, std::string passwordMain);
 	void create(t_fds *fds);
 	void mainLoop(t_fds *fds);
-	int x_int(int err, int res, char *str, char *file, int line);
+	int  x_int(int err, int res, char *str, char *file, int line);
 	void *x_void(void *err, void *res, char *str, char *file, int line);
 	void srvAccept(t_fds *fds, int s);
 	void cleanFD(t_fds *fds);
@@ -51,4 +51,5 @@ public:
 	void init_fd(t_fds *fds);
 	void do_select();
 	void check_fd(t_fds *fds);
+	void initialFDS(t_fds *fds);
 };

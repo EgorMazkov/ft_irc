@@ -9,7 +9,7 @@
 			"request": "launch",
 			"name": "Debug",
 			"program": "/Users/ghumbert/Desktop/project/ft_irc/ircserv",
-			"args": ["8080", "qqqq"],
+			"args": ["5486", "qqqq"],
 			"cwd": "${workspaceFolder}"
 		}
 	]

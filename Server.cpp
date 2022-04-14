@@ -29,13 +29,32 @@ void Server::create(t_fds *fds)
 	srvAccept(fds, s);
 }
 
+void Server::initialFDS(t_fds *fds)
+{
+	int i;
+	struct rlimit rlp;
+
+	X(-1, getrlimit(RLIMIT_NOFILE, &rlp), "getrlimit");
+	maxfd = rlp.rlim_cur;
+	fds = (t_fds *)Xv(NULL, malloc(sizeof(*fds) * maxfd), "malloc");
+	i = 0;
+	while (i < maxfd)
+	{
+		serv.cleanFD(&fds[i]);
+		i++;
+	}
+}
+
 int main(int ac, char **av)
 {
+	t_fds fds;
+
 	if (ac != 3)
 	{
 		std::cout << av[0] << " <port> <password>" << std::endl;
 		return (1);
 	}
+	serv.initialFDS(&fds);
 	serv.initial(atoi(av[1]), av[2]);
 }
 
@@ -67,8 +86,8 @@ void Server::srvAccept(t_fds *fds, int s)
 
 	csin_len = sizeof(csin);
 	cs = X(-1, accept(s, (struct sockaddr *)&csin, &csin_len), "accept");
-	std::cout << "New client #%d from %s:%d\n"
-			  << cs << inet_ntoa(csin.sin_addr) << ntohs(csin.sin_port) << std::endl;
+	std::cout << "New client " << cs <<" from " << inet_ntoa(csin.sin_addr) << ":" << ntohs(csin.sin_port) << std::endl;
+	std::cout << &fds[cs] << std::endl;
 	cleanFD(&fds[cs]);
 	fds[cs].type = 2;
 	serv.client_read(fds, cs);
@@ -77,6 +96,7 @@ void Server::srvAccept(t_fds *fds, int s)
 
 void Server::cleanFD(t_fds *fds)
 {
+	std::cout << &fds << std::endl;
 	fds->type = 0;
 	fds->fctRead = NULL;
 	fds->fctWrite = NULL;
