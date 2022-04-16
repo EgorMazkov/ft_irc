@@ -4,7 +4,7 @@ CC				=	c++
 
 CDEBUG			=	 -Wall -Wextra -Werror -std=c++98 -g
 
-SRC				=	$(wildcard *.cpp)
+SRC				=	Server.cpp		main.cpp
 
 OBJ				=	$(SRC:.cpp=.o)
 OBJ_DIR			=	../objs/
