@@ -48,7 +48,6 @@ int Server::startServer(int ac, char **av)
 	std::cout << "SERVER: listening clients...\n";
 	listen(client[numberClient], 1);
 
-	server = accept(client[numberClient], reinterpret_cast<struct sockaddr*>(&server_adress), &size);
 	while (true)
 	{
 		FD_ZERO(&fd_read);
@@ -73,40 +72,6 @@ int Server::startServer(int ac, char **av)
 		else
 			std::cout << "ERROR" << std::endl;
 	}
-
-	// if (server < 0)
-	// 	std::cout << ERROR_S << "Can't accepting client.\n";
-	// isExit = false;
-	// while (true)
-	// {
-	// 	strcpy(buffer, "=> Server connected!\n");
-	// 	send(server, buffer, BUFFER_SIZE, 0);
-	// 	std::cout << "=> Connected to the client #" << numberClient << '\n' << "Enter " << CLIENT_CLOSE_CONNECTION_SYMBOL << " to the end to connection/\n\n";
-
-	// 	std::cout << "Client: ";
-	// 	recv(server, buffer, BUFFER_SIZE, 0);
-	// 	std::cout << buffer << '\n';
-	// 	if (is_client_connection_close(buffer))
-	// 		isExit = true;
-
-	// 	while (isExit)
-	// 	{
-	// 		std::cout << "Server: ";
-	// 		std::cin.getline(buffer, BUFFER_SIZE);
-	// 		send(server, buffer, BUFFER_SIZE, 0);
-	// 		if (is_client_connection_close(buffer))
-	// 			break;
-
-	// 		std::cout << "Client: ";
-	// 		recv(server, buffer, BUFFER_SIZE, 0);
-	// 		std::cout << buffer << '\n';
-	// 		if (is_client_connection_close(buffer))
-	// 			break;
-	// 	}
-
-	// 	std::cout << "\n Goodbye..." << '\n';
-	// 	isExit = false;
-	// }
 	return (1);
 }
 
