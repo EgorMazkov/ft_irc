@@ -1,14 +1,14 @@
 NAME			=	ircserv
 
-CC				=	c++
+CC				=	c++ -g
 
-CDEBUG			=	 -Wall -Wextra -Werror -std=c++98 -g
+CDEBUG			=	 -Wall -Wextra -Werror -std=c++98
 
-SRC				=	Server.cpp		main.cpp
+SRC				=	main.cpp Server.cpp Client.cpp
 
 OBJ				=	$(SRC:.cpp=.o)
-OBJ_DIR			=	../objs/
-OBJS			=	$(OBJ)
+OBJ_DIR			=	./objs/
+OBJS			=	$(addprefix $(OBJ_DIR), $(OBJ))
 
 all				:	$(NAME)
 

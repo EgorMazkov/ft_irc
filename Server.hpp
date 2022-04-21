@@ -10,25 +10,56 @@
 #include <unistd.h>
 #include <iostream>
 #include <sys/socket.h>
+#include <fcntl.h>
 
-#define DEFAULT_PORT	1616
 #define ERROR_S			"SERVER ERROR: "
 #define BUFFER_SIZE		1024
 #define CLIENT_CLOSE_CONNECTION_SYMBOL	'#'
+#define SERVER_CLOSE_CONNECTION_SYMBOL	'#'
+#define SERVER_IP "127.0.0.1"
+
+// using namespace std;
+
+
+static int numberClient = 1;
 
 class Server
 {
 	private:
 		short portServer;
-		const std::string passwordServer;
+		std::string passwordServer; 
+		socklen_t client_length;
+
 	public:
-		Server(short port, std::string password);
+		/*  переменные который были в main*/
+		int				client[100];
+		int				server;
+		int				ret;
+		bool			isExit;
+		socklen_t		size;
+		Server			*serv;
+		struct sockaddr_in	server_adress;
+		char			buffer[BUFFER_SIZE];
+		fd_set			fd_read, fd_write;
+		struct timeval tv;
+		int				new_socket;
+
+		int	socket1, socket2;
+
+
+
+		/**/
+		Server();
 		~Server();
 		// Server(Server const &src);
 
 		// Server &operator=(Server const &rhs);
 		
 		int		getPortServer(void) const;
-
+		int	startServer(int ac, char **av);
+		bool is_client_connection_close(const char *msg);
+		void	init(std::string port, std::string password);
+		void	initial(char **av);
+		std::pair<int, std::string> connect();
 		
 };
