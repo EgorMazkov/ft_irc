@@ -15,6 +15,10 @@ void Server::initial(char **av)
 	this->passwordServer = static_cast<std::string>(av[2]);
 	this->portServer = portmin;
 	numberClient = 0;
+    FD_ZERO(&fd_read);
+    FD_ZERO(&fd_write);
+    tv.tv_sec = 0;
+    tv.tv_usec = 0;
 	strcpy(buffer, "Connected Server\n");
 }
 
@@ -47,22 +51,18 @@ int Server::startServer(int ac, char **av)
 	}
 
 	size = sizeof(server_adress);
+	std::cout << "Port: " << portServer << std::endl;
 	std::cout << "SERVER: listening clients...\n";
 	listen(client[numberClient], 1);
 
+	int socket1 = socket(AF_INET, SOCK_STREAM, 0);
 	while (true)
 	{
 		FD_ZERO(&fd_read);
-		FD_ZERO(&fd_write);
 
 		FD_SET(socket1, &fd_read);
-		FD_SET(socket2, &fd_write);;
-
-		int sock = socket1 > socket2 ? socket1 : socket2;
-		tv.tv_sec = 10;
-		tv.tv_usec = 0;
-
-		if (select(sock + 1, &fd_read, &fd_write, NULL, &tv) > 0)
+		FD_SET(socket2, &fd_write);
+		if (select(socket1 + 1, &fd_read, &fd_write, NULL, &tv) > 0)
 		{
 			std::pair<int, std::string> pair = connect();
 			new_socket = pair.first;
@@ -70,15 +70,12 @@ int Server::startServer(int ac, char **av)
 			send(new_socket, buffer, strlen(buffer), 0);
 			Client client(new_socket);
 			client.getHost(pair.second); 
-			FD_SET(new_socket, &fd_read);
-			if (checkTerminal(new_socket) == true)
-			{
-				std::cout << "Идет поиск команды\n";
-				continue ;
-			}
 		}
-		else
-			std::cout << "ERROR" << std::endl;
+		if (checkTerminal(new_socket) == true)
+		{
+			std::cout << "Идет поиск команды\n";
+			continue ;
+		}
 	}
 	return (1);
 }
