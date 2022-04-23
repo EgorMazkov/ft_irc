@@ -21,13 +21,13 @@
 // using namespace std;
 
 
-static int numberClient = 1;
+static int numberClient;
 
 class Server
 {
 	private:
 		short portServer;
-		std::string passwordServer; 
+		std::string passwordServer, message; 
 		socklen_t client_length;
 
 	public:
@@ -39,7 +39,8 @@ class Server
 		socklen_t		size;
 		Server			*serv;
 		struct sockaddr_in	server_adress;
-		char			buffer[BUFFER_SIZE];
+		char			buffer[BUFFER_SIZE]; // отсюда берет текст для клиента
+		char			*str; // сюда записываются от клиента информация
 		fd_set			fd_read, fd_write;
 		struct timeval tv;
 		int				new_socket;
@@ -61,5 +62,5 @@ class Server
 		void	init(std::string port, std::string password);
 		void	initial(char **av);
 		std::pair<int, std::string> connect();
-		
+		bool checkTerminal(int _new_socket);
 };

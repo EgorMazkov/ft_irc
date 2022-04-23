@@ -14,6 +14,8 @@ void Server::initial(char **av)
 	portmin = atoi(av[1]);
 	this->passwordServer = static_cast<std::string>(av[2]);
 	this->portServer = portmin;
+	numberClient = 0;
+	strcpy(buffer, "Connected Server\n");
 }
 
 
@@ -65,9 +67,15 @@ int Server::startServer(int ac, char **av)
 			std::pair<int, std::string> pair = connect();
 			new_socket = pair.first;
 			fcntl(new_socket, F_SETFL, O_NONBLOCK);
+			send(new_socket, buffer, strlen(buffer), 0);
 			Client client(new_socket);
-			client.getHost(pair.second);
+			client.getHost(pair.second); 
 			FD_SET(new_socket, &fd_read);
+			if (checkTerminal(new_socket) == true)
+			{
+				std::cout << "Идет поиск команды\n";
+				continue ;
+			}
 		}
 		else
 			std::cout << "ERROR" << std::endl;
@@ -97,5 +105,14 @@ bool Server::is_client_connection_close(const char *msg)
 		if (msg[i] == CLIENT_CLOSE_CONNECTION_SYMBOL)
 			return (true);
 	}
+	return (false);
+}
+
+
+bool Server::checkTerminal(int _new_socket) // должно находится у клиента
+{
+	recv(_new_socket, str, BUFFER_SIZE, 0);
+	if (str)
+		return (true);
 	return (false);
 }
