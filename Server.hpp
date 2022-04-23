@@ -40,7 +40,7 @@ class Server
 		Server			*serv;
 		struct sockaddr_in	server_adress;
 		char			buffer[BUFFER_SIZE]; // отсюда берет текст для клиента
-		char			*str; // сюда записываются от клиента информация
+		char			str[0]; // сюда записываются от клиента информация
 		fd_set			fd_read, fd_write;
 		struct timeval tv;
 		int				new_socket;

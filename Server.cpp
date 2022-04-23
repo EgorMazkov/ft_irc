@@ -19,6 +19,7 @@ void Server::initial(char **av)
     FD_ZERO(&fd_write);
     tv.tv_sec = 0;
     tv.tv_usec = 0;
+	str[0] = 0;
 	strcpy(buffer, "Connected Server\n");
 }
 
@@ -62,7 +63,8 @@ int Server::startServer(int ac, char **av)
 
 		FD_SET(socket1, &fd_read);
 		FD_SET(socket2, &fd_write);
-		if (select(socket1 + 1, &fd_read, &fd_write, NULL, &tv) > 0)
+		if (select(socket1 + 1, &fd_read, &fd_write, NULL, &tv) > 0  && (!FD_ISSET(socket1, &fd_read)) && (!FD_ISSET(socket1, &fd_write)))
+		// if ((select_return > 0) && (FD_ISSET(sock, &read_set)) && (!FD_ISSET(sock, &err_set)))
 		{
 			std::pair<int, std::string> pair = connect();
 			new_socket = pair.first;
@@ -108,8 +110,9 @@ bool Server::is_client_connection_close(const char *msg)
 
 bool Server::checkTerminal(int _new_socket) // должно находится у клиента
 {
-	recv(_new_socket, str, BUFFER_SIZE, 0);
-	if (str)
+	int res;
+	res = recv(_new_socket, str, BUFFER_SIZE, 0);
+	if (res > 0)
 		return (true);
 	return (false);
 }
