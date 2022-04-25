@@ -32,6 +32,8 @@ class Server
 
 	public:
 		/*  переменные который были в main*/
+		int				i;
+		int				idClient;
 		int				client[100];
 		int				server;
 		int				ret;
@@ -41,10 +43,12 @@ class Server
 		struct sockaddr_in	server_adress;
 		char			buffer[BUFFER_SIZE]; // отсюда берет текст для клиента
 		char			str[0]; // сюда записываются от клиента информация
+		char			*recv_str;
 		fd_set			fd_read, fd_write;
 		struct timeval tv;
-		int				new_socket;
+		int				new_socket[100], previous_socket;
 
+        int max_fd;
 		int	socket1, socket2;
 
 
@@ -56,11 +60,12 @@ class Server
 
 		// Server &operator=(Server const &rhs);
 		
-		int		getPortServer(void) const;
 		int	startServer(int ac, char **av);
 		bool is_client_connection_close(const char *msg);
 		void	init(std::string port, std::string password);
 		void	initial(char **av);
 		std::pair<int, std::string> connect();
-		bool checkTerminal(int _new_socket);
+		bool checkTerminal(int *_new_socket);
+        bool bilding();
+        bool checkPassword(std::string pass);
 };

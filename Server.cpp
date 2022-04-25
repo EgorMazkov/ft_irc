@@ -1,12 +1,21 @@
 #include "Server.hpp"
 #include "Client.hpp"
+#include "Command.hpp"
 
+Command com;
 
 Server::Server()
 {
 };
 
 Server::~Server(){};
+
+bool Server::checkPassword(std::string pass) {
+    if (pass == passwordServer)
+        return (true);
+    return (false);
+}
+
 
 void Server::initial(char **av)
 {
@@ -18,60 +27,82 @@ void Server::initial(char **av)
     FD_ZERO(&fd_read);
     FD_ZERO(&fd_write);
     tv.tv_sec = 0;
+	idClient = 0;
     tv.tv_usec = 0;
 	str[0] = 0;
+	i = -1;
 	strcpy(buffer, "Connected Server\n");
 }
 
-
-int	Server::getPortServer(void) const
+bool Server::bilding()
 {
-	return (this->portServer);
+    int i = 1;
+    socket1 = socket(AF_INET, SOCK_STREAM, 0);
+    std::cout << socket1 << std::endl;
+    if (socket1 < 0)
+    {
+        std::cout << ERROR_S << "establishing socket error.\n" ;
+        return false;
+    }
+    if (setsockopt(socket1, SOL_SOCKET, SO_REUSEADDR, &i, sizeof(int)) == -1)
+    {
+        std::cout << ERROR_S << std::endl;
+    }
+    bzero((char *) &server_adress, sizeof(server_adress));
+    server_adress.sin_family = AF_INET;
+    server_adress.sin_addr.s_addr = htons(INADDR_ANY);
+    server_adress.sin_port = htons(portServer);
+    if (bind(socket1, (struct sockaddr*)(&server_adress), sizeof(server_adress)) < 0)
+    {
+        std::cout << ERROR_S << "binding connection. Socket has already been establishing.\n";
+        return false;
+    }
+    std::cout << "SERVER: Socket for server was succesfully created\n";
+    fcntl(socket1, F_SETFL, O_NONBLOCK);
+    max_fd = socket1;
+    return true;
 }
 
 int Server::startServer(int ac, char **av)
 {
 	initial(av);
-	client[numberClient] = socket(AF_INET, SOCK_STREAM, 0);
-	if (client[numberClient] < 0)
-	{
-		std::cout << ERROR_S << "establishing socket error.\n" ;
-		return (0); // exit запрещен
-	}
-	std::cout << "SERVER: Socket for server was succesfully created\n";
-
-	server_adress.sin_port = htons(portServer);
-	server_adress.sin_family = AF_INET;
-	server_adress.sin_addr.s_addr = htons(INADDR_ANY);
-
-	ret = bind(client[numberClient], reinterpret_cast<struct sockaddr*>(&server_adress), sizeof(server_adress));
-	if (ret < 0)
-	{
-		std::cout << ERROR_S << "binding connection. Socket has already been establishing.\n";
-		return (-1);
-	}
-
+    if (!bilding())
+        return (-1);
 	size = sizeof(server_adress);
 	std::cout << "Port: " << portServer << std::endl;
 	std::cout << "SERVER: listening clients...\n";
-	listen(client[numberClient], 1);
-
-	int socket1 = socket(AF_INET, SOCK_STREAM, 0);
+	listen(socket1, 1);
 	while (true)
 	{
+		if (i == 99)
+		{
+			std::cout << "Error: maximum number of clients connected" << std::endl;
+			while (i == 99)
+			{
+				checkTerminal(new_socket);
+				/*if (если кто-то отключится)
+					i--; */
+			}
+		}
+		if (new_socket[i] != -1)
+			i++;
 		FD_ZERO(&fd_read);
 
 		FD_SET(socket1, &fd_read);
 		FD_SET(socket2, &fd_write);
-		if (select(socket1 + 1, &fd_read, &fd_write, NULL, &tv) > 0  && (!FD_ISSET(socket1, &fd_read)) && (!FD_ISSET(socket1, &fd_write)))
-		// if ((select_return > 0) && (FD_ISSET(sock, &read_set)) && (!FD_ISSET(sock, &err_set)))
-		{
+        if (max_fd < socket1)
+            max_fd = socket1;
+		if (select(max_fd + 1, &fd_read, &fd_write, NULL, &tv) > 0)
+        {
 			std::pair<int, std::string> pair = connect();
-			new_socket = pair.first;
-			fcntl(new_socket, F_SETFL, O_NONBLOCK);
-			send(new_socket, buffer, strlen(buffer), 0);
-			Client client(new_socket);
-			client.getHost(pair.second); 
+			new_socket[i] = pair.first;
+			if (new_socket[i] != -1)
+			{
+				fcntl(new_socket[i], F_SETFL, O_NONBLOCK);
+				send(new_socket[i], buffer, strlen(buffer), 0);
+				Client client(new_socket[i]);
+				client.getHost(pair.second);
+			}
 		}
 		if (checkTerminal(new_socket) == true)
 		{
@@ -85,16 +116,17 @@ int Server::startServer(int ac, char **av)
 std::pair<int, std::string> Server::connect()
 {
 	struct sockaddr_in ClientAddr;
+	std::string qwe = "lsdkjflsdkfjsdf";
 	client_length = sizeof(ClientAddr);
-	new_socket = accept(client[numberClient], (struct sockaddr *) &ClientAddr, &client_length);
-    if (new_socket < 0) 
+	new_socket[i] = accept(socket1, (struct sockaddr *) &ClientAddr, &client_length);
+    if (new_socket[i] < 0)
 	{
-    	std::cout << "ERROR on accepting the connection" << std::endl;
-        return std::make_pair(-1, nullptr);
+    	// std::cout << "ERROR on accepting the connection" << std::endl;
+        return std::make_pair(-1, qwe);
     }
 	std::cout << "New Client Connected, ip: " << inet_ntoa(ClientAddr.sin_addr)
 			<< ", port: " << ntohs(ClientAddr.sin_port) << std::endl;
-	return std::make_pair(new_socket, inet_ntoa(ClientAddr.sin_addr));
+	return std::make_pair(new_socket[i], inet_ntoa(ClientAddr.sin_addr));
 }
 
 bool Server::is_client_connection_close(const char *msg)
@@ -108,11 +140,24 @@ bool Server::is_client_connection_close(const char *msg)
 }
 
 
-bool Server::checkTerminal(int _new_socket) // должно находится у клиента
+bool Server::checkTerminal(int *_new_socket)
 {
 	int res;
-	res = recv(_new_socket, str, BUFFER_SIZE, 0);
-	if (res > 0)
-		return (true);
+	idClient = 0;
+	while (new_socket[idClient] != 0)
+	{
+		res = recv(_new_socket[idClient], str, BUFFER_SIZE, 0);
+		if (res > 0)
+		{
+			if (str[res - 1] == '\n')
+			{
+				std::cout << "Client #" << idClient + 1 << std::endl; // здесь вместо буквы idClient, будет никнейм клиента
+                com.checkCommand(str);
+				return (true); // вместо этого идет разделение команд и после поиск команды
+			}
+		}
+		else
+			idClient++;
+	}
 	return (false);
 }

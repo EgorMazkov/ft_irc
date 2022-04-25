@@ -4,7 +4,7 @@ CC				=	c++ -g
 
 CDEBUG			=	 -Wall -Wextra -Werror -std=c++98
 
-SRC				=	main.cpp Server.cpp Client.cpp
+SRC				=	main.cpp Server.cpp Client.cpp Command.cpp
 
 OBJ				=	$(SRC:.cpp=.o)
 OBJ_DIR			=	./objs/
