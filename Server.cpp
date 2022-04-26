@@ -1,6 +1,4 @@
 #include "Server.hpp"
-#include "Client.hpp"
-#include "Command.hpp"
 
 Command com;
 
@@ -11,11 +9,15 @@ Server::Server()
 Server::~Server(){};
 
 bool Server::checkPassword(std::string pass) {
-    if (pass == passwordServer)
+    if (pass == getPassServ())
         return (true);
     return (false);
 }
 
+std::string Server::getPassServ()
+{
+	return (this->passwordServer);
+}
 
 void Server::initial(char **av)
 {
@@ -32,7 +34,6 @@ void Server::initial(char **av)
 	str[0] = 0;
 	i = -1;
 	strcpy(buffer, "Connected Server\n");
-    mapa<std::string, std::string> :: std::iterator<t1>, std::iterator<t2>;
 }
 
 bool Server::bilding()
@@ -100,11 +101,8 @@ int Server::startServer(int ac, char **av)
 			if (new_socket[i] != -1)
 			{
 				fcntl(new_socket[i], F_SETFL, O_NONBLOCK);
-				send(new_socket[i], buffer, strlen(buffer), 0);
-				// Client client(new_socket[i]);
-                t1 = new Client
-				client[i] = new Client(new_socket[i]);
-				client[i].getHost(pair.second);
+//				std::cout << new_socket[i] << std::endl;
+				mapa.insert(std::make_pair(new_socket[i], new Client(new_socket[i])));
 			}
 		}
 		checkTerminal(new_socket);
@@ -120,7 +118,6 @@ std::pair<int, std::string> Server::connect()
 	new_socket[i] = accept(socket1, (struct sockaddr *) &ClientAddr, &client_length);
     if (new_socket[i] < 0)
 	{
-    	// std::cout << "ERROR on accepting the connection" << std::endl;
         return std::make_pair(-1, qwe);
     }
 	std::cout << "New Client Connected, ip: " << inet_ntoa(ClientAddr.sin_addr)
@@ -150,8 +147,8 @@ void Server::checkTerminal(int *_new_socket)
 		{
 			if (str[res - 1] == '\n')
 			{
-				std::cout << "Client #" << idClient + 1 << std::endl; // здесь вместо значения idClient, будет никнейм клиента
-                com.checkCommand(str);
+//				std::cout << "Client #" << idClient + 1 << std::endl; // здесь вместо значения idClient, будет никнейм клиента
+                com.checkCommand(str, new_socket[idClient], *serv);
 			}
 		}
 		else

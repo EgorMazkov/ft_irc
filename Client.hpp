@@ -13,15 +13,22 @@
 class Client
 {
 private:
-	int		id; // unique id for every user for ping-pong commands
-	int     socket_fd; // unique socket for every user for send message from server
-    std::string Host;
-public:
+	int		id;
+	int     socket_fd;
     std::string nickname;
+	int			passCheck;
+	int			nickCheck;
+	int			userCheck;
+
+	
+public:
 	Client(int _socket_fd);
 	Client();
-	void getHost(std::string _host);
 	~Client();
-	void getNickName(std::string nick);
-};
+	void setNickName(std::string nick);
+	Client& operator=(Client *e);
+	void    setuserCheck();
+	void    setnickCheck();
+	void    setpassCheck();
 
+};

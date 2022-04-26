@@ -1,29 +1,12 @@
 #include "Command.hpp"
 
-Server serv;
-Client cl;
-
 Command::Command(){}
 
-bool Command::checkCommand(char *str) {
+bool Command::checkCommand(char *str, int _socket, Server &serv) {
     int i = 0;
     int q = 0;
     int j = 0;
     std::string av0[7];
-    // std::string av1;
-    
-    // while (str[q] != ' ')
-    // {
-    //     av0 += str[q];
-    //     q++;
-    // }
-    // q++;
-    // i++;
-    // while (str[q] != '\n')
-    // {
-    //     av1 += str[q];
-    //     q++;
-    // }
     while (str[q] != '\n')
     {
         while (str[q] != ' ')
@@ -35,7 +18,7 @@ bool Command::checkCommand(char *str) {
             av0[i] += str[q];
             q++;
         }
-        av0[i] += '\n';
+        // av0[i] += '\n';
         i++;
         if (str[q] == '\n')
             break;
@@ -44,11 +27,22 @@ bool Command::checkCommand(char *str) {
     }
     if (av0[0] == "PASS")
     {
-        if (serv.checkPassword(av0[0]) == true)
+        if (serv.checkPassword(av0[1]) == true)
+        {
+             serv.mapa[_socket]->setpassCheck();
+            // cl.setPassNickUser();
             return (true);
+        }
         return (false);
     }
-    else if (av0[0] == "NICK"){cl.getNickName(av0[0]);}
+    if (av0[0] == "NICK"){
+         serv.mapa[_socket]->setnickCheck();
+         serv.mapa[_socket]->setNickName(av0[0]);
+    }
+//    if (av[0] == "USER")
+//    {
+//
+//    }
     return (false);
 }
 

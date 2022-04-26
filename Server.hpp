@@ -12,6 +12,8 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 #include <map>
+#include "Client.hpp"
+#include "Command.hpp"
 
 #define ERROR_S			"SERVER ERROR: "
 #define BUFFER_SIZE		1024
@@ -21,6 +23,8 @@
 
 // using namespace std;
 
+class Client;
+
 
 static int numberClient;
 
@@ -28,15 +32,16 @@ class Server
 {
 	private:
 		short portServer;
-		std::string passwordServer, message; 
+		std::string passwordServer, message;
 		socklen_t client_length;
-
-	public:
+        std::string channel[100];
+        std::string passwordChannel[100];
+public:
+		std::map<int, Client*> mapa;
 		/*  переменные который были в main*/
-        std::map<std::string, std::string> mapa;
 		int				i;
 		int				idClient;
-		int				*client;
+		char		client[100];
 		int				server;
 		int				ret;
 		bool			isExit;
@@ -69,5 +74,6 @@ class Server
 		std::pair<int, std::string> connect();
 		void checkTerminal(int *_new_socket);
         bool bilding();
+		std::string getPassServ();
         bool checkPassword(std::string pass);
 };
