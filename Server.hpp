@@ -11,6 +11,7 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <fcntl.h>
+#include <map>
 
 #define ERROR_S			"SERVER ERROR: "
 #define BUFFER_SIZE		1024
@@ -32,9 +33,10 @@ class Server
 
 	public:
 		/*  переменные который были в main*/
+        std::map<std::string, std::string> mapa;
 		int				i;
 		int				idClient;
-		int				client[100];
+		int				*client;
 		int				server;
 		int				ret;
 		bool			isExit;
@@ -65,7 +67,7 @@ class Server
 		void	init(std::string port, std::string password);
 		void	initial(char **av);
 		std::pair<int, std::string> connect();
-		bool checkTerminal(int *_new_socket);
+		void checkTerminal(int *_new_socket);
         bool bilding();
         bool checkPassword(std::string pass);
 };

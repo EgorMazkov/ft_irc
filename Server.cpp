@@ -32,6 +32,7 @@ void Server::initial(char **av)
 	str[0] = 0;
 	i = -1;
 	strcpy(buffer, "Connected Server\n");
+    mapa<std::string, std::string> :: std::iterator<t1>, std::iterator<t2>;
 }
 
 bool Server::bilding()
@@ -100,15 +101,13 @@ int Server::startServer(int ac, char **av)
 			{
 				fcntl(new_socket[i], F_SETFL, O_NONBLOCK);
 				send(new_socket[i], buffer, strlen(buffer), 0);
-				Client client(new_socket[i]);
-				client.getHost(pair.second);
+				// Client client(new_socket[i]);
+                t1 = new Client
+				client[i] = new Client(new_socket[i]);
+				client[i].getHost(pair.second);
 			}
 		}
-		if (checkTerminal(new_socket) == true)
-		{
-			std::cout << "Идет поиск команды\n";
-			continue ;
-		}
+		checkTerminal(new_socket);
 	}
 	return (1);
 }
@@ -140,7 +139,7 @@ bool Server::is_client_connection_close(const char *msg)
 }
 
 
-bool Server::checkTerminal(int *_new_socket)
+void Server::checkTerminal(int *_new_socket)
 {
 	int res;
 	idClient = 0;
@@ -151,13 +150,11 @@ bool Server::checkTerminal(int *_new_socket)
 		{
 			if (str[res - 1] == '\n')
 			{
-				std::cout << "Client #" << idClient + 1 << std::endl; // здесь вместо буквы idClient, будет никнейм клиента
+				std::cout << "Client #" << idClient + 1 << std::endl; // здесь вместо значения idClient, будет никнейм клиента
                 com.checkCommand(str);
-				return (true); // вместо этого идет разделение команд и после поиск команды
 			}
 		}
 		else
 			idClient++;
 	}
-	return (false);
 }

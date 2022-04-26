@@ -16,8 +16,8 @@ private:
 	int		id; // unique id for every user for ping-pong commands
 	int     socket_fd; // unique socket for every user for send message from server
     std::string Host;
-    std::string nickname;
 public:
+    std::string nickname;
 	Client(int _socket_fd);
 	Client();
 	void getHost(std::string _host);
