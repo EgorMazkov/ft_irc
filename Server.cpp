@@ -9,20 +9,27 @@ Server::Server()
 Server::~Server(){};
 
 bool Server::checkPassword(std::string pass) {
-    if (pass == getPassServ())
+    if (pass == passwordServer)
+	{
+		std::cout << "true\n";
         return (true);
+	}
+	std::cout << "false\n";
     return (false);
 }
 
-Server::Server(Server const &src)
-{
-	*this = src;
-}
+// Server& Server::operator=(const Server &rhs)
+// {
+// 	if (this == &rhs)
+// 		return (*this);
+// 	passwordServer = rhs.passwordServer;
+// 	return (*this);
+// }
 
-std::string Server::getPassServ()
-{
-	return (this->passwordServer);
-}
+// Server::Server(const Server &src)
+// {
+// 	*this = src;
+// }
 
 void Server::initial(char **av)
 {
@@ -106,7 +113,6 @@ int Server::startServer(int ac, char **av)
 			if (new_socket[i] != -1)
 			{
 				fcntl(new_socket[i], F_SETFL, O_NONBLOCK);
-//				std::cout << new_socket[i] << std::endl;
 				mapa.insert(std::make_pair(new_socket[i], new Client(new_socket[i])));
 			}
 		}
@@ -151,12 +157,48 @@ void Server::checkTerminal(int *_new_socket)
 		if (res > 0)
 		{
 			if (str[res - 1] == '\n')
-			{
-//				std::cout << "Client #" << idClient + 1 << std::endl; // здесь вместо значения idClient, будет никнейм клиента
-                com.checkCommand(str, new_socket[idClient], *serv);
-			}
+                checkCommand(str, new_socket[idClient]);
 		}
 		else
 			idClient++;
 	}
+}
+
+
+bool Server::checkCommand(char *str, int _socket) {
+    int i = 0;
+    int q = 0;
+    int j = 0;
+    std::string av0[7];
+    while (str[q] != '\n')
+    {
+        while (str[q] != ' ')
+        {
+            if ( str[q] == '\n' || str[q] == '\r')
+                break ;
+            if (str[q] == ':')
+                q++;
+            av0[i] += str[q];
+            q++;
+        }
+        i++;
+        if (str[q] == '\n')
+            break;
+        q++;
+        continue;
+    }
+    if (av0[0] == "PASS")
+    {
+        if (checkPassword(av0[1]) == true)
+        {
+            mapa[_socket]->setpassCheck();
+            return (true);
+        }
+        return (false);
+    }
+    if (av0[0] == "NICK"){
+        mapa[_socket]->setnickCheck();
+        mapa[_socket]->setNickName(av0[0]);
+    }
+    return (false);
 }

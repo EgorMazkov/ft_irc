@@ -11,5 +11,5 @@ private:
 public:
 	Command(/* args */);
 	~Command();
-    bool checkCommand(char *str, int _socket, Server serv);
+    bool checkCommand(char *str, int _socket);
 };

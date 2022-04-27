@@ -32,7 +32,7 @@ class Server
 {
 	private:
 		short portServer;
-		std::string passwordServer, message;
+		std::string passwordServer;
 		socklen_t client_length;
         std::string channel[100];
         std::string passwordChannel[100];
@@ -63,9 +63,7 @@ public:
 		/**/
 		Server();
 		~Server();
-		Server(Server const &src);
 
-		// Server &operator=(Server const &rhs);
 		
 		int	startServer(int ac, char **av);
 		bool is_client_connection_close(const char *msg);
@@ -74,6 +72,18 @@ public:
 		std::pair<int, std::string> connect();
 		void checkTerminal(int *_new_socket);
         bool bilding();
-		std::string getPassServ();
         bool checkPassword(std::string pass);
+
+
+
+
+
+
+
+
+
+		// Server& operator=(const Server &rhs);
+		// Server(const Server &src);
+
+		bool checkCommand(char *str, int _socket);
 };
