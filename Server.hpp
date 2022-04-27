@@ -37,6 +37,7 @@ class Server
         std::string channel[100];
         std::string passwordChannel[100];
 public:
+		int flag;
 		std::map<int, Client*> mapa;
 		/*  переменные который были в main*/
 		int				i;
