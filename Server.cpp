@@ -14,6 +14,11 @@ bool Server::checkPassword(std::string pass) {
     return (false);
 }
 
+Server::Server(Server const &src)
+{
+	*this = src;
+}
+
 std::string Server::getPassServ()
 {
 	return (this->passwordServer);

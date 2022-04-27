@@ -2,7 +2,7 @@
 
 Command::Command(){}
 
-bool Command::checkCommand(char *str, int _socket, Server &serv) {
+bool Command::checkCommand(char *str, int _socket, Server serv) {
     int i = 0;
     int q = 0;
     int j = 0;

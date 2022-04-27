@@ -8,7 +8,7 @@
 			"type": "lldb",
 			"request": "launch",
 			"name": "Debug",
-			"program": "/Users/ghumbert/Desktop/ft_irc/ircserv",
+			"program": "/Users/rdanica/Desktop/irc_serv/ircserv",
 			"args": ["1543", "1111"],
 			"cwd": "${workspaceFolder}"
 		}

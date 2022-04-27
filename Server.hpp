@@ -63,7 +63,7 @@ public:
 		/**/
 		Server();
 		~Server();
-		// Server(Server const &src);
+		Server(Server const &src);
 
 		// Server &operator=(Server const &rhs);
 		
