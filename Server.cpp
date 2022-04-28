@@ -1,6 +1,5 @@
 #include "Server.hpp"
 
-Command com;
 
 Server::Server()
 {
@@ -13,19 +12,6 @@ bool Server::checkPassword(std::string pass) {
         return (true);
     return (false);
 }
-
-// Server& Server::operator=(const Server &rhs)
-// {
-// 	if (this == &rhs)
-// 		return (*this);
-// 	passwordServer = rhs.passwordServer;
-// 	return (*this);
-// }
-
-// Server::Server(const Server &src)
-// {
-// 	*this = src;
-// }
 
 void Server::initial(char **av)
 {
@@ -41,8 +27,10 @@ void Server::initial(char **av)
     tv.tv_usec = 0;
 	str[0] = 0;
 	i = -1;
+	allClients = -1;
 	strcpy(buffer, "Connected Server\n");
 	flag = 0;
+	numberChannelPasswordChannel = 0;
 }
 
 bool Server::bilding()
@@ -85,20 +73,19 @@ int Server::startServer(int ac, char **av)
 	listen(socket1, 1);
 	while (true)
 	{
-		if (i == 99)
+		if (allClients == 99)
 		{
 			std::cout << "Error: maximum number of clients connected" << std::endl;
-			while (i == 99)
+			while (allClients == 99)
 			{
 				checkTerminal(new_socket);
 				/*if (если кто-то отключится)
-					i--; */
+					allClients--; */
 			}
 		}
-		if (new_socket[i] != -1)
-			i++;
+		if (new_socket[allClients] != -1)
+			allClients++;
 		FD_ZERO(&fd_read);
-
 		FD_SET(socket1, &fd_read);
 		FD_SET(socket2, &fd_write);
         if (max_fd < socket1)
@@ -106,11 +93,12 @@ int Server::startServer(int ac, char **av)
 		if (select(max_fd + 1, &fd_read, &fd_write, NULL, &tv) > 0)
         {
 			std::pair<int, std::string> pair = connect();
-			new_socket[i] = pair.first;
-			if (new_socket[i] != -1)
+			new_socket[allClients] = pair.first;
+			if (new_socket[allClients] != -1)
 			{
-				fcntl(new_socket[i], F_SETFL, O_NONBLOCK);
-				mapa.insert(std::make_pair(new_socket[i], new Client(new_socket[i])));
+				fcntl(new_socket[allClients], F_SETFL, O_NONBLOCK);
+				
+				mapa.insert(std::make_pair(new_socket[allClients], new Client(new_socket[allClients])));
 				flag = 1;
 			}
 		}
@@ -144,86 +132,50 @@ bool Server::is_client_connection_close(const char *msg)
 	return (false);
 }
 
-
 void Server::checkTerminal(int *_new_socket)
 {
 	int res;
 	idClient = 0;
 	while (new_socket[idClient] > 0)
 	{
-		res = recv(_new_socket[idClient], str, BUFFER_SIZE, 0);
-		if (res > 0)
-		{
-			std::cout << str << std::endl;
-			if (str[res - 1] == '\n')
-                checkCommand(str, new_socket[idClient]);
-		}
-		else
-		{
-			if (flag == 1)
-			{
-				if (mapa[new_socket[idClient]]->getnickCheck() == 1 \
-				&& mapa[new_socket[idClient]]->getpassCheck() == 1 \
-				&& mapa[new_socket[idClient]]->getuserCheck() == 1)
-				{
-					mapa[new_socket[idClient]]->setRegisted();
-					std::cout << mapa[new_socket[idClient]]->getNickName() << " Registed\n";
-				}
-			}
-			idClient++;
-		}
-	}
-}
-
-
-bool Server::checkCommand(char *str, int _socket) {
-    int i = 0;
-    int q = 0;
-    int j = 0;
-    std::string av0[7];
-    while (str[q] != '\n')
-    {
-        while (str[q] != ' ')
+        if (select(max_fd + 1, &fd_read, &fd_write, NULL, &tv) > 0)
         {
-            if ( (str[q] == '\r' || str[q + 1] == '\n') && str[q + 2])
-			{
-				i++;
-				q += 2;
-                continue ;
-			}
-			else if ((str[q] == '\r' || str[q + 1] == '\n') && !str[q + 2])
-				break ;
-            if (str[q] == ':')
-                q++;
-            av0[i] += str[q];
-            q++;
+    
+            res = recv(_new_socket[idClient], str, BUFFER_SIZE, 0);
+            if (res > 0)
+            {
+                if (str[res - 1] == '\n')
+                {
+                    checkCommand(str, new_socket[idClient], idClient);
+//                if (mapa[new_socket[idClient]]->getRegisted() != 1)
+//                else
+//                    checkingCommand(str, new_socket[idClient]);
+                }
+            }
+            if (flag == 1)
+            {
+                if (mapa[new_socket[idClient]]->getnickCheck() == 1 \
+            && mapa[new_socket[idClient]]->getpassCheck() == 1 \
+            && mapa[new_socket[idClient]]->getuserCheck() == 1
+                    && mapa[new_socket[idClient]]->getRegisted() != 1)
+                {
+                    mapa[new_socket[idClient]]->setRegisted();
+                    std::cout << mapa[new_socket[idClient]]->getNickName() << " Registed\n";
+                    flag = 0;
+                }
+                else if (mapa[new_socket[idClient]]->getpassCheck() == 0 \
+                && mapa[new_socket[idClient]]->getnickCheck() == 1 \
+                && mapa[new_socket[idClient]]->getuserCheck() == 1)
+                {
+                    std::cout << mapa[new_socket[idClient]]->getNickName() << " not Registed\n";
+                    flag = 0;
+                    close(new_socket[idClient]);
+                    allClients--;
+                    delete mapa[new_socket[idClient]];
+                }
+            }
+            idClient++;
         }
-        i++;
-        if (str[q] == '\n')
-            break;
-        q++;
-        continue;
-    }
-    if (av0[0] == "PASS")
-    {
-        if (checkPassword(av0[1]) == true)
-        {
-            mapa[_socket]->setpassCheck();
-            return (true);
-        }
-        return (false);
-    }
-    if (av0[0] == "NICK"){
-        mapa[_socket]->setnickCheck();
-        mapa[_socket]->setNickName(av0[1]);
-    }
-	if (av0[0] == "USER")
-	{
-		mapa[_socket]->setuserCheck();
-		mapa[_socket]->setUserName(av0[1]);
-		mapa[_socket]->setzvezda(av0[2]);
-		mapa[_socket]->setHostName(av0[3]);
-		mapa[_socket]->setRealname(av0[4]);
+        
 	}
-    return (false);
 }

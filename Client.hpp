@@ -19,6 +19,7 @@ private:
 	int nickCheck;
 	int userCheck;
 	int Registed;
+	
 
 	std::string Realname;
 	std::string UserName;
@@ -30,18 +31,19 @@ public:
 	Client();
 	~Client();
 	void setNickName(std::string nick);
-	Client &operator=(Client *e);
 	void setuserCheck();
 	void setnickCheck();
 	void setpassCheck();
 	void setzvezda(std::string str);
 	void setRealname(std::string str);
+	void setRealNamePlus(std::string str);
 	void setUserName(std::string str);
 	void setHostName(std::string str);
 	int getuserCheck();
 	int getnickCheck();
 	int getpassCheck();
 	void	setRegisted();
+	int     getRegisted();
 	std::string getNickName();
 
 };

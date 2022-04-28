@@ -13,7 +13,6 @@
 #include <fcntl.h>
 #include <map>
 #include "Client.hpp"
-#include "Command.hpp"
 
 #define ERROR_S			"SERVER ERROR: "
 #define BUFFER_SIZE		1024
@@ -36,6 +35,8 @@ class Server
 		socklen_t client_length;
         std::string channel[100];
         std::string passwordChannel[100];
+        int allClients;
+        int numberChannelPasswordChannel;
 public:
 		int flag;
 		std::map<int, Client*> mapa;
@@ -55,17 +56,10 @@ public:
 		fd_set			fd_read, fd_write;
 		struct timeval tv;
 		int				new_socket[100], previous_socket;
-
         int max_fd;
 		int	socket1, socket2;
-
-
-
-		/**/
 		Server();
 		~Server();
-
-		
 		int	startServer(int ac, char **av);
 		bool is_client_connection_close(const char *msg);
 		void	init(std::string port, std::string password);
@@ -74,17 +68,16 @@ public:
 		void checkTerminal(int *_new_socket);
         bool bilding();
         bool checkPassword(std::string pass);
-
-
-
-
-
-
-
-
-
-		// Server& operator=(const Server &rhs);
-		// Server(const Server &src);
-
-		bool checkCommand(char *str, int _socket);
+		bool checkCommand(char *str, int _socket, int idClient);
+		
+		
+		
+		
+		
+		
+		
+		// command
+        void quit(int _socket);
+        void join(int _socket, std::string av0[100], int flag);
+    
 };
