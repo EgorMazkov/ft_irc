@@ -13,17 +13,15 @@
 #include <fcntl.h>
 #include <map>
 #include "Client.hpp"
-
+#include "Channel.hpp"
 #define ERROR_S			"SERVER ERROR: "
 #define BUFFER_SIZE		1024
 #define CLIENT_CLOSE_CONNECTION_SYMBOL	'#'
 #define SERVER_CLOSE_CONNECTION_SYMBOL	'#'
 #define SERVER_IP "127.0.0.1"
 
-// using namespace std;
-
 class Client;
-
+class Channel;
 
 static int numberClient;
 
@@ -33,13 +31,13 @@ class Server
 		short portServer;
 		std::string passwordServer;
 		socklen_t client_length;
-        std::string channel[100];
-        std::string passwordChannel[100];
         int allClients;
         int numberChannelPasswordChannel;
 public:
 		int flag;
 		std::map<int, Client*> mapa;
+        std::map<std::string, Channel *>chan;
+        std::map<std::string, Channel *> :: iterator t1;
 		/*  переменные который были в main*/
 		int				i;
 		int				idClient;
@@ -78,6 +76,5 @@ public:
 		
 		// command
         void quit(int _socket);
-        void join(int _socket, std::string av0[100], int flag);
-    
+        void join(int _socket, std::string av0, std::string av1, std::string av2, int flag);
 };

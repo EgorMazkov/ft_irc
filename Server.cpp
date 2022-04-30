@@ -97,7 +97,6 @@ int Server::startServer(int ac, char **av)
 			if (new_socket[allClients] != -1)
 			{
 				fcntl(new_socket[allClients], F_SETFL, O_NONBLOCK);
-				
 				mapa.insert(std::make_pair(new_socket[allClients], new Client(new_socket[allClients])));
 				flag = 1;
 			}

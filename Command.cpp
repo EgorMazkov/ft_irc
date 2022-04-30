@@ -1,6 +1,5 @@
 #include "Server.hpp"
 
-
 bool Server::checkCommand(char *str, int _socket, int idClient) {
     std::string av0[100];
     int flag = 0;
@@ -23,6 +22,8 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
             q++;
         }
         i++;
+        if (str[q] == '\n')
+            break ;
         q++;
         if (!str[q])
             break ;
@@ -99,6 +100,9 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
     }
     if (av0[i] == "QUIT"){quit(_socket);}
 //	if (av0[i] == "JOIN"){join(_socket, av0, flag);}
+    if (av0[i] == "JOIN"){
+        join(_socket, av0[1], av0[2], av0[3], flag);
+    }
     return (false);
 }
 
