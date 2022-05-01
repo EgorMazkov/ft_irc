@@ -28,7 +28,7 @@ void Server::initial(char **av)
 	str[0] = 0;
 	i = -1;
 	allClients = -1;
-	strcpy(buffer, "Connected Server\n");
+	strcpy(buffer, "Hello peer\n");
 	flag = 0;
 	numberChannelPasswordChannel = 0;
 }
@@ -97,8 +97,11 @@ int Server::startServer(int ac, char **av)
 			if (new_socket[allClients] != -1)
 			{
 				fcntl(new_socket[allClients], F_SETFL, O_NONBLOCK);
-				mapa.insert(std::make_pair(new_socket[allClients], new Client(new_socket[allClients])));
-				flag = 1;
+                cl = mapa.find(new_socket[i]);
+                if (cl == mapa.end()){
+                    mapa.insert(std::make_pair(new_socket[allClients], new Client(new_socket[allClients])));
+                    flag = 1;
+                }
 			}
 		}
 		checkTerminal(new_socket);
@@ -116,9 +119,10 @@ std::pair<int, std::string> Server::connect()
 	{
         return std::make_pair(-1, qwe);
     }
-	std::cout << "New Client Connected, ip: " << inet_ntoa(ClientAddr.sin_addr)
-			<< ", port: " << ntohs(ClientAddr.sin_port) << std::endl;
-	return std::make_pair(new_socket[i], inet_ntoa(ClientAddr.sin_addr));
+    std::cout << new_socket[i] << std::endl;
+    std::cout << "New Client Connected, ip: " << inet_ntoa(ClientAddr.sin_addr)
+              << ", port: " << ntohs(ClientAddr.sin_port) << std::endl;
+    return std::make_pair(new_socket[i], inet_ntoa(ClientAddr.sin_addr));
 }
 
 bool Server::is_client_connection_close(const char *msg)
@@ -144,23 +148,30 @@ void Server::checkTerminal(int *_new_socket)
             if (res > 0)
             {
                 if (str[res - 1] == '\n')
-                {
                     checkCommand(str, new_socket[idClient], idClient);
-//                if (mapa[new_socket[idClient]]->getRegisted() != 1)
-//                else
-//                    checkingCommand(str, new_socket[idClient]);
-                }
             }
             if (flag == 1)
             {
                 if (mapa[new_socket[idClient]]->getnickCheck() == 1 \
             && mapa[new_socket[idClient]]->getpassCheck() == 1 \
-            && mapa[new_socket[idClient]]->getuserCheck() == 1
-                    && mapa[new_socket[idClient]]->getRegisted() != 1)
+            && mapa[new_socket[idClient]]->getuserCheck() == 1 \
+            && mapa[new_socket[idClient]]->getOffineOnline() == 0)
                 {
                     mapa[new_socket[idClient]]->setRegisted();
-                    std::cout << mapa[new_socket[idClient]]->getNickName() << " Registed\n";
-                    flag = 0;
+                    mapa[new_socket[idClient]]->setOfflineOnlinePlus();
+                    if (mapa[new_socket[idClient]]->getRegisted() != 1)
+                        std::cout << mapa[new_socket[idClient]]->getNickName() << " Welcome back\n";
+                    else
+                        std::cout << mapa[new_socket[idClient]]->getNickName() << " Registed\n";
+                    int i = 1;
+                    while (i < 4)
+                    {
+                        motdText(mapa[new_socket[idClient]]->getNickName(), i);
+                        send(new_socket[idClient], mot, strlen(mot), 1);
+                        std::cout << mot;
+                        flag = 0;
+                        i++;
+                    }
                 }
                 else if (mapa[new_socket[idClient]]->getpassCheck() == 0 \
                 && mapa[new_socket[idClient]]->getnickCheck() == 1 \
@@ -178,3 +189,34 @@ void Server::checkTerminal(int *_new_socket)
         
 	}
 }
+
+void Server::motdText(std::string nick, int i) {
+    std::string Motd;
+    
+    if (i == 1){
+        Motd = "375 " + nick + " :- " + SERVER_IP + " Message of the day - \n";
+        strcpy(mot, Motd.c_str());
+        return;
+    }
+    if (i == 2){
+        Motd = "372 " + nick + " :- " + buffer + "\n";
+        strcpy(mot, Motd.c_str());
+        return;
+    }
+    if (i == 3){
+        Motd = "376 " + nick + " :- " + "END of /MOTD command\n";
+        strcpy(mot, Motd.c_str());
+        return;
+    }
+}
+
+int Server::strq(char strq[BUFFER_SIZE])
+{
+    int i = 0;
+    while (strq[i] != '\n')
+        i++;
+    return (i);
+}
+
+
+

@@ -19,6 +19,7 @@ private:
 	int nickCheck;
 	int userCheck;
 	int Registed;
+    int offlineOnline;
 	
 
 	std::string Realname;
@@ -45,5 +46,9 @@ public:
 	void	setRegisted();
 	int     getRegisted();
 	std::string getNickName();
+    void setOfflineOnlinePlus();
+    void setOfflineOnlineMinus();
+    int getId();
+    int getOffineOnline();
 
 };

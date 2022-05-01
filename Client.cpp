@@ -2,7 +2,7 @@
 
 Client::Client(){}
 
-Client::Client(int _socket_fd): socket_fd(_socket_fd), id(++numberClient), passCheck(0), userCheck(0), nickCheck(0), nickname(""), Registed(0)
+Client::Client(int _socket_fd): socket_fd(_socket_fd), id(++numberClient), passCheck(0), userCheck(0), nickCheck(0), nickname(""), Registed(0), offlineOnline(0)
 {std::cout << "Client №" << id << " connected\n";}
 void	Client::setRegisted(){++this->Registed;}
 void    Client::setuserCheck(){   ++this->userCheck;}
@@ -18,6 +18,10 @@ void    Client::setRealname(std::string str){this->Realname = str;}
 void    Client::setUserName(std::string str){this->UserName = str;}
 void    Client::setHostName(std::string str){this->HostName = str;}
 void    Client::setNickName(std::string nick){this->nickname = nick;}
+void    Client::setOfflineOnlinePlus() {++this->offlineOnline;}
+int     Client::getOffineOnline() {return (this->offlineOnline);}
+void    Client::setOfflineOnlineMinus() {--this->offlineOnline;}
+int    Client::getId() {return (this->id);}
 
 void Client::setRealNamePlus(std::string str) {
     this->Realname += ' ';

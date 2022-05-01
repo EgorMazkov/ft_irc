@@ -5,21 +5,34 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
     int flag = 0;
     int i = 0;
     int q = 0;
-    if (str[q] == 'Q')
-    {
-        while (str[q] != '\n')
-            av0[0] += str[q++];
-    }
+    // if (str[q] == 'Q')
+    // {
+    //     while (str[q] != '\n' || str[q] != ' ')
+    //         av0[0] += str[q++];
+    // }
     while (str[q] != '\n')
     {
         while (str[q] != ' ')
         {
             if (str[q] == '\r' || str[q] == ':')
                 q++;
-            if (str[q] == '\n')
+            if (str[q] == '\n' && !str[q + 1])
                 break ;
+            if (str[q] == '\n' && str[q + 1])
+            {
+                q++;
+                i++;
+                continue ;
+            }
             av0[i] += str[q];
             q++;
+        }
+        if (str[q] == ' ')
+        {
+            while (str[q] == ' ')
+                q++;
+            i++;
+            continue ;
         }
         i++;
         if (str[q] == '\n')
@@ -32,7 +45,7 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
     flag = i;
     i = 0;
     
-    while (mapa[_socket]->getRegisted() != 1)
+    while (mapa[_socket]->getOffineOnline() != 1)
     {
         if (av0[i] == "PASS")
         {
@@ -98,33 +111,25 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
                 return (false);
         }
     }
-    if (av0[i] == "QUIT"){quit(_socket);}
-//	if (av0[i] == "JOIN"){join(_socket, av0, flag);}
+    if (av0[i] == "QUIT"){
+        quit(_socket);
+        std::cout << mapa[_socket]->getNickName() << ": disconnected\n";
+        mapa[_socket]->setOfflineOnlineMinus();
+        allClients--;
+    }
     if (av0[i] == "JOIN"){
         join(_socket, av0[1], av0[2], av0[3], flag);
     }
+//    if (av0[i] == "PRIVMSG") {
+//        char strings[BUFFER_SIZE];
+//        int i = 0;
+//        while (str[i] != '#' && str[i]) {
+//            i++;
+//        }
+//        if (str[i] == '#')
+//            privmsgChannel(av0);
+//    }
     return (false);
 }
 
 void Server::quit(int _socket) {close(_socket);}
-
-//void Server::join(int _socket, std::string *av0, int flag) {
-//    int i = numberChannelPasswordChannel;
-//    if (numberChannelPasswordChannel != 0)
-//    {
-//        while (numberChannelPasswordChannel != 0)
-//        {
-//            if (av0->compare(channel[numberChannelPasswordChannel]))
-//
-//        }
-//    }
-//    channel[numberChannelPasswordChannel] = av0[i];
-//    std::cout << mapa[_socket]->getNickName() << " created Channel: " << channel[numberChannelPasswordChannel] << "\n";
-//    if (i + 1 < flag) {
-//        passwordChannel[numberChannelPasswordChannel] = av0[++i];
-//        std::cout << "Password: " << passwordChannel[numberChannelPasswordChannel];
-//    }
-//    std::cout << std::endl;
-//    numberChannelPasswordChannel++;
-//
-//}
