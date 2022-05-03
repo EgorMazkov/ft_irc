@@ -52,18 +52,20 @@ void Server::join(int _socket) {
 }
 
 void Server::privmsgChannel(char *str, int i) {
-    i = 3;
-    std::string msg[BUFFER_SIZE];
+    i = 2;
+    std::string msg;
     
     // msg += commandClient[i];
     // strcpy(mot, msg->c_str());
     while (!commandClient[i].empty()){
-        msg += commandClient[i];
+        msg += commandClient[i] + " ";
         i++;
     }
+    msg += '\n';
     i = 0;
+    strcpy(str, msg.c_str());
     while (i != chan[commandClient[1]]->getNumClient()){
-        send(chan[commandClient[1]]->socketClientForChannel(i), , strlen(buffer), 0);
+        send(chan[commandClient[1]]->socketClientForChannel(i), str, strlen(str), 0);
         i++;
     }
 }
