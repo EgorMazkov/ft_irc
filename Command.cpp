@@ -1,15 +1,8 @@
 #include "Server.hpp"
 
-bool Server::checkCommand(char *str, int _socket, int idClient) {
-    std::string av0[100];
-    int flag = 0;
+int Server::splitCommand(char *str) {
     int i = 0;
     int q = 0;
-    // if (str[q] == 'Q')
-    // {
-    //     while (str[q] != '\n' || str[q] != ' ')
-    //         av0[0] += str[q++];
-    // }
     while (str[q] != '\n')
     {
         while (str[q] != ' ')
@@ -22,9 +15,11 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
             {
                 q++;
                 i++;
+                commandClient[i] = '\n';
+                i++;
                 continue ;
             }
-            av0[i] += str[q];
+            commandClient[i] += str[q];
             q++;
         }
         if (str[q] == ' ')
@@ -35,101 +30,138 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
             continue ;
         }
         i++;
+        commandClient[i] = '\n';
+        i++;
         if (str[q] == '\n')
             break ;
         q++;
         if (!str[q])
             break ;
     }
+    return (i);
+}
+
+void Server::writeCommandClient(int idClient, int q, int _socket)
+{
+    int i = 0;
+    std::cout << "Client #" << idClient << " ";
+    while (commandClient[i] == "")
+        i++;
+    std::cout << "<" << commandClient[i] << "> ";
+    i++;
+    while (commandClient[i] != "\n"){
+        while (commandClient[i] == "")
+            i++;
+        std::cout << "<" << commandClient[i] << "> ";
+                 i++;
+    }
+    std::cout << std::endl;
+}
+
+bool Server::checkCommand(char *str, int _socket, int idClient) {
+    int flag = 0;
+    int q = 0;
+    int i = 0;
+    i = splitCommand(str);
     q = idClient + 1;
     flag = i;
     i = 0;
-    
-    while (mapa[_socket]->getOffineOnline() != 1)
-    {
-        if (av0[i] == "PASS")
-        {
-            std::cout << "Client #" << q;
-            std::cout << " <" << av0[i] << "> ";
-            std::cout << "<" << av0[i + 1] << ">\n";
-            if (checkPassword(av0[++i]))
-            {
+    while (mapa[_socket]->getOffineOnline() != 1){
+        if (commandClient[i] == "PASS"){
+            if (checkPassword(commandClient[++i])){
                 flag++;
+                writeCommandClient(q, i, _socket);
                 mapa[_socket]->setpassCheck();
             }
-            if (av0[i + 1] == "NICK" || av0[i + 1] == "USER")
-                i++;
-            else
+            deleteCommand();
+            if (commandClient[i + 2] == "NICK" || commandClient[i + 2] == "USER")
+                i += 2;
+            else{
                 return (false);
-        }
-        if (av0[i] == "NICK"){
-            std::cout << "Client #" << q;
-            std::cout << " <" << av0[i] << "> ";
-            mapa[_socket]->setnickCheck();
-            mapa[_socket]->setNickName(av0[++i]);
-            std::cout << "<" << av0[i] << ">\n";
-            flag++;
-            if (av0[i + 1] == "PASS" || av0[i + 1] == "USER")
-                i++;
-            else
-                return (false);
-        }
-        if (av0[i] == "USER")
-        {
-            std::cout << "Client #" << q;
-            std::cout << " <" << av0[i] << "> ";
-            mapa[_socket]->setuserCheck();
-            mapa[_socket]->setUserName(av0[++i]);
-            std::cout << "<" << av0[i] << "> ";
-            mapa[_socket]->setzvezda(av0[++i]);
-            std::cout << "<" << av0[i] << "> ";
-            mapa[_socket]->setHostName(av0[++i]);
-            std::cout << "<" << av0[i] << "> ";
-            mapa[_socket]->setRealname(av0[++i]);
-            std::cout << "<" << av0[i] << "> ";
-            i++;
-            while (av0[i] != "PASS" || av0[i] != "NICK")
-            {
-                if (i == flag)
-                {
-                    std::cout << std::endl;
-                    break ;
-                }
-                if (av0[i] == "NICK" || av0[i] == "PASS")
-                {
-                    std::cout << std::endl;
-                    break ;
-                }
-                std::cout << "<" << av0[i] << ">\n";
-                mapa[_socket]->setRealNamePlus(av0[i]);
-                i++;
             }
-            flag++;
-            if (av0[i] == "PASS" || av0[i] == "NICK")
+        }
+        if (commandClient[i] == "USER"){
+            mapa[_socket]->setUserName(commandClient[++i]);
+            mapa[_socket]->setzvezda(commandClient[++i]);
+            mapa[_socket]->setHostName(commandClient[++i]);
+            mapa[_socket]->setRealname(commandClient[++i]);
+            writeCommandClient(q, i, _socket);
+            mapa[_socket]->setuserCheck();
+            deleteCommand();
+            if (commandClient[i + 2] == "PASS" || commandClient[i + 2] == "NICK"){
+                i += 2;
                 continue ;
-            else
+            }
+            else{
                 return (false);
+            }
+        }
+        if (commandClient[i] == "NICK"){
+            mapa[_socket]->setNickName(commandClient[++i]);
+            writeCommandClient(q, i, _socket);
+            mapa[_socket]->setnickCheck();
+            deleteCommand();
+            if (commandClient[i] == "PASS" || commandClient[i] == "USER")
+                continue ;
+            else{
+                return (false);
+            }
+        }
+        else{
+            error(451, _socket);
         }
     }
-    if (av0[i] == "QUIT"){
+    if (commandClient[i] == "QUIT"){
         quit(_socket);
         std::cout << mapa[_socket]->getNickName() << ": disconnected\n";
         mapa[_socket]->setOfflineOnlineMinus();
         allClients--;
     }
-    if (av0[i] == "JOIN"){
-        join(_socket, av0[1], av0[2], av0[3], flag);
+    if (commandClient[i] == "JOIN"){
+        i = 0;
+        while (str[i] != '#'){
+            if (str[i] == '\n')
+                break ;
+            i++;
+        }
+        if (str[i] == '#')
+            join(_socket);
+        else
+            error(403, _socket);
+        deleteCommand();
     }
-//    if (av0[i] == "PRIVMSG") {
-//        char strings[BUFFER_SIZE];
-//        int i = 0;
-//        while (str[i] != '#' && str[i]) {
-//            i++;
-//        }
-//        if (str[i] == '#')
-//            privmsgChannel(av0);
-//    }
+    if (commandClient[i] == "PRIVMSG") {
+        int i = 0;
+        while (str[i] != '#') {
+            if (str[i] == '\n')
+                break ;
+            i++;
+        }
+        if (str[i] == '#')
+            privmsgChannel(str, i);
+    }
     return (false);
 }
 
-void Server::quit(int _socket) {close(_socket);}
+void Server::quit(int _socket) {deleteCommand();close(_socket);}
+
+
+void Server::deleteCommand() {
+    int i = 0;
+    while (commandClient[i] != "\n"){
+        commandClient[i] = "";
+        i++;
+    }
+    commandClient[i] = "";
+}
+
+void Server::error(int error, int _socket) {
+    std::string msg[BUFFER_SIZE];
+    char *str;
+//    if (error == 451)
+//        msg += ":IRC 451 :You have not registered\n";
+//    if (error == 403)
+//        msg += ":IRC 403 " + mapa[_socket]->getNickName() + " " + commandClient[1] + " :No such channel\n";
+    strcpy(str, msg->c_str());
+    send(_socket, str, strlen(str), 0);
+}

@@ -31,42 +31,39 @@ std::string Channel::getChannel() {
 
 Channel::~Channel(){}
 
-void Server::join(int _socket, std::string av1, std::string av2, std::string av3, int flag) {
+void Server::join(int _socket) {
     int i = 1;
-    int q = 2;
-    chann = chan.find(av1);
-    if (chann != chan.end())
-    {
-        chan[av1]->setClients(mapa[_socket]->getId());
-        std::cout << mapa[_socket]->getNickName() << " added to channel: " << chan[av1]->getChannel() << std::endl;
-//        std::cout << "Клиент добавлен\n";
+    chann = chan.find(commandClient[i]);
+    if (chann != chan.end()){
+        chan[commandClient[i]]->setClients(_socket);
+        std::cout << mapa[_socket]->getNickName() << " added to channel: " << chan[commandClient[i]]->getChannel() << std::endl;
         return;
     }
-    else if (numberChannelPasswordChannel >= 0) {
-        chan.insert(std::make_pair(av1, new Channel()));
-        chan[av1]->setChannel(av1);
-        chan[av1]->setPassword(av1);
-        chan[av1]->setAdminChannel(mapa[_socket]->getNickName());
-        chan[av1]->setClients(mapa[_socket]->getId());
-        std::cout << "Channel created. Admin: " + mapa[_socket]->getNickName();
+    else if (numberChannelPasswordChannel >= 0){
+        chan.insert(std::make_pair(commandClient[i], new Channel()));
+        chan[commandClient[i]]->setChannel(commandClient[i]);
+        chan[commandClient[i]]->setPassword(commandClient[i + 1]);
+        chan[commandClient[i]]->setAdminChannel(mapa[_socket]->getNickName());
+        chan[commandClient[i]]->setClients(_socket);
+        std::cout << "Channel created. Admin: " + mapa[_socket]->getNickName() << std::endl;
         numberChannelPasswordChannel++;
         return;
-    
     }
 }
 
-void Server::privmsgChannel(std::string *msg) {
-   std::string masseg;
-   char m[BUFFER_SIZE];
-
-   int i = 2;
-   while (!msg[i].empty()){
-       masseg += msg[i] + " ";
-       i++;
-   }
-   strcpy(m, masseg.c_str());
-   while (i != chan[msg[1]]->getNumClient()) {
-       send(chan[msg[1]]->socketClientForChannel(i), m, strlen(m), 1);
-       i++;
-   }
+void Server::privmsgChannel(char *str, int i) {
+    i = 3;
+    std::string msg[BUFFER_SIZE];
+    
+    // msg += commandClient[i];
+    // strcpy(mot, msg->c_str());
+    while (!commandClient[i].empty()){
+        msg += to_string(commandClient[i]);
+        i++;
+    }
+    i = 0;
+    while (i != chan[commandClient[1]]->getNumClient()){
+        send(chan[commandClient[1]]->socketClientForChannel(i), , strlen(buffer), 0);
+        i++;
+    }
 }

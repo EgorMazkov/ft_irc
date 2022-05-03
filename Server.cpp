@@ -28,7 +28,7 @@ void Server::initial(char **av)
 	str[0] = 0;
 	i = -1;
 	allClients = -1;
-	strcpy(buffer, "Hello peer\n");
+	strcpy(buffer, "Hello peer");
 	flag = 0;
 	numberChannelPasswordChannel = 0;
 }
@@ -98,10 +98,9 @@ int Server::startServer(int ac, char **av)
 			{
 				fcntl(new_socket[allClients], F_SETFL, O_NONBLOCK);
                 cl = mapa.find(new_socket[i]);
-                if (cl == mapa.end()){
+                if (cl == mapa.end())
                     mapa.insert(std::make_pair(new_socket[allClients], new Client(new_socket[allClients])));
-                    flag = 1;
-                }
+                flag = 1;
 			}
 		}
 		checkTerminal(new_socket);
@@ -167,8 +166,8 @@ void Server::checkTerminal(int *_new_socket)
                     while (i < 4)
                     {
                         motdText(mapa[new_socket[idClient]]->getNickName(), i);
-                        send(new_socket[idClient], mot, strlen(mot), 1);
-                        std::cout << mot;
+                        send(new_socket[idClient], mot, strlen(mot), 0);
+//                        std::cout << mot;
                         flag = 0;
                         i++;
                     }

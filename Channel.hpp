@@ -1,6 +1,13 @@
 #pragma once
 #include "Server.hpp"
 
+template <typename T>
+std::string to_string(T arg){
+	std::stringstream ss;
+	ss << arg;
+	return ss.str();
+}
+
 class Server;
 
 #define BUFFER_SIZE 1024
