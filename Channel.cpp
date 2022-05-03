@@ -58,7 +58,7 @@ void Server::privmsgChannel(char *str, int i) {
     // msg += commandClient[i];
     // strcpy(mot, msg->c_str());
     while (!commandClient[i].empty()){
-        msg += to_string(commandClient[i]);
+        msg += commandClient[i];
         i++;
     }
     i = 0;
