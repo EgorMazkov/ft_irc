@@ -80,13 +80,15 @@ public:
 		int splitCommand(char *str);
         std::string commandClient[BUFFER_SIZE];
         void writeCommandClient(int idClient, int q, int _socket);
-        void deleteCommand();
+        void deleteCommand(int q);
 		
 		
 		
 		// command
         void quit(int _socket);
         void join(int _socket);
-        void privmsgChannel(char *str, int i);
+        void privmsgChannel(char *str, int i, int _socket);
         void error(int error, int _socket);
+        void privmsgClient(int _socket);
+        void kick(int _socket);
 };

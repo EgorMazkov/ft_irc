@@ -100,6 +100,7 @@ int Server::startServer(int ac, char **av)
                 cl = mapa.find(new_socket[i]);
                 if (cl == mapa.end())
                     mapa.insert(std::make_pair(new_socket[allClients], new Client(new_socket[allClients])));
+                    mapa[new_socket[idClient]]->setIP(pair.second);
                 flag = 1;
 			}
 		}
@@ -155,12 +156,15 @@ void Server::checkTerminal(int *_new_socket)
             && mapa[new_socket[idClient]]->getuserCheck() == 1 \
             && mapa[new_socket[idClient]]->getOffineOnline() == 0)
                 {
-                    mapa[new_socket[idClient]]->setRegisted();
-                    mapa[new_socket[idClient]]->setOfflineOnlinePlus();
-                    if (mapa[new_socket[idClient]]->getRegisted() != 1)
+                    if (mapa[new_socket[idClient]]->getOffineOnline() == 0 && mapa[new_socket[idClient]]->getRegisted() != 0){
                         std::cout << mapa[new_socket[idClient]]->getNickName() << " Welcome back\n";
-                    else
+                        mapa[new_socket[idClient]]->setOfflineOnlinePlus();
+                    }
+                    else{
+                        mapa[new_socket[idClient]]->setRegisted();
+                        mapa[new_socket[idClient]]->setOfflineOnlinePlus();
                         std::cout << mapa[new_socket[idClient]]->getNickName() << " Registed\n";
+                    }
                     int i = 1;
                     while (i < 4)
                     {
@@ -179,7 +183,7 @@ void Server::checkTerminal(int *_new_socket)
                     flag = 0;
                     close(new_socket[idClient]);
                     allClients--;
-                    delete mapa[new_socket[idClient]];
+                    mapa.erase(new_socket[idClient]);
                 }
             idClient++;
         }

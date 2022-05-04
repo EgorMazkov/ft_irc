@@ -21,9 +21,15 @@ void Channel::setPassword(std::string passwordChannel) {
     this->Password = passwordChannel;
 }
 
-void Channel::setAdminChannel(std::string name) {
-    this->adminChannel = name;
+void Channel::setKickClient(int i) {
+    this->clients[i] = -1;
 }
+
+void Channel::setAdminChannel(int _socketAdmin) {
+    this->adminChannel = _socketAdmin;
+}
+
+int Channel::getAdminChannel(){return (this->adminChannel);}
 
 std::string Channel::getChannel() {
     return (this->Channels);
@@ -43,7 +49,7 @@ void Server::join(int _socket) {
         chan.insert(std::make_pair(commandClient[i], new Channel()));
         chan[commandClient[i]]->setChannel(commandClient[i]);
         chan[commandClient[i]]->setPassword(commandClient[i + 1]);
-        chan[commandClient[i]]->setAdminChannel(mapa[_socket]->getNickName());
+        chan[commandClient[i]]->setAdminChannel(_socket);
         chan[commandClient[i]]->setClients(_socket);
         std::cout << "Channel created. Admin: " + mapa[_socket]->getNickName() << std::endl;
         numberChannelPasswordChannel++;
@@ -51,21 +57,70 @@ void Server::join(int _socket) {
     }
 }
 
-void Server::privmsgChannel(char *str, int i) {
+void Server::privmsgChannel(char *str, int i, int _socket) {
     i = 2;
     std::string msg;
-    
-    // msg += commandClient[i];
-    // strcpy(mot, msg->c_str());
-    while (!commandClient[i].empty()){
-        msg += commandClient[i] + " ";
-        i++;
+    int q = 0;
+    while (_socket != chan[commandClient[1]]->socketClientForChannel(q))
+        q++;
+    if (_socket == chan[commandClient[1]]->socketClientForChannel(q)){
+        msg += ":" + mapa[_socket]->getNickName() + "!" + chan[commandClient[1]]->getChannel() + "@" + mapa[_socket]->getIP() + " ";
+        i = 0;
+        while (!commandClient[i].empty()){
+            msg += commandClient[i] + " ";
+            i++;
+            if (i == 2)
+                msg += ": ";
+        }
+        i = 0;
+        strcpy(str, msg.c_str());
+        while (i != chan[commandClient[1]]->getNumClient()){
+            if (chan[commandClient[1]]->socketClientForChannel(i) == _socket){
+                i++;
+                continue ;
+            }
+            send(chan[commandClient[1]]->socketClientForChannel(i), str, strlen(str), 0);
+            i++;
+        }
     }
-    msg += '\n';
-    i = 0;
-    strcpy(str, msg.c_str());
-    while (i != chan[commandClient[1]]->getNumClient()){
-        send(chan[commandClient[1]]->socketClientForChannel(i), str, strlen(str), 0);
-        i++;
+    else{
+        error(401, _socket);
+    }
+}
+
+void Server::kick(int _socket) {
+    int i = 1;
+    std::string msg;
+    char str[BUFFER_SIZE];
+    int _socketKick;
+    if (_socket != chan[commandClient[i]]->getAdminChannel())
+        error(403, _socket);
+    chann = chan.find(commandClient[i]);
+    if (chann != chan.end()){
+        while (commandClient[2] != mapa[new_socket[i]]->getNickName())
+            i++;
+        if (commandClient[2] == mapa[new_socket[i]]->getNickName()){
+            _socketKick = new_socket[i];
+            i = 0;
+            while (_socketKick != chan[commandClient[1]]->socketClientForChannel(i))
+                i++;
+            if (_socketKick == chan[commandClient[1]]->socketClientForChannel(i))
+                chan[commandClient[1]]->setKickClient(i);
+            else{
+                error(401, _socket);
+                return;
+            }
+        }
+        msg += ":" + mapa[_socket]->getNickName() + "!" + mapa[_socket]->getUserName() + "@" + mapa[_socket]->getIP() + " ";
+        i = 0;
+        while (!commandClient[i].empty()){
+            msg += commandClient[i];
+            i++;
+        }
+        strcpy(str, msg.c_str());
+        send(_socket, str, strlen(str), 0);
+        send(_socketKick, str, strlen(str), 0);
+        deleteCommand(i);
+        return;
     }
 }

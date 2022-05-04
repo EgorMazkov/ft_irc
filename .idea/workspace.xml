@@ -14,8 +14,13 @@
   <component name="ChangeListManager">
     <list default="true" id="1d391e30-3de1-49a4-a41e-1d431d4c9d9e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Channel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Channel.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Channel.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/Channel.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Client.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/Client.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Command.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Command.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Server.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/Server.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,6 +73,11 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="structure.view.defaults.are.configured" value="true" />
   </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mkae" />
+    </option>
+  </component>
   <component name="RunManager">
     <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
@@ -84,7 +94,7 @@
       <option name="presentableId" value="Default" />
       <updated>1651573571674</updated>
       <workItem from="1651573575800" duration="4072000" />
-      <workItem from="1651655639695" duration="561000" />
+      <workItem from="1651655639695" duration="6103000" />
     </task>
     <servers />
   </component>

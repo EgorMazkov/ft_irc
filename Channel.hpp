@@ -12,19 +12,23 @@ private:
     std::string Password;
     int clients[BUFFER_SIZE];
     int     numClient;
-    std::string adminChannel;
+    int adminChannel;
     std::string message[BUFFER_SIZE];
 public:
     Channel();
     void setChannel(std::string nameChannel);
     void setPassword(std::string passwordChannel);
     void setClients(int _socketClient);
-    void setAdminChannel(std::string name);
+    void setAdminChannel(int _socketAdmin);
     ~Channel();
     std::string getChannel();
     bool checkChannel(std::string nickChannel);
     int getNumClient();
     int socketClientForChannel(int i);
+    int getAdminChannel();
+    void setKickClient(int i);
+    
+    
 //    void join(int _socket, std::string av0, std::string av1, std::string av2, int flag);
     
 };

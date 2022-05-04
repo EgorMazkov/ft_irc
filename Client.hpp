@@ -26,15 +26,16 @@ private:
 	std::string UserName;
 	std::string HostName;
 	std::string zvezda;
+    std::string ip;
 
 public:
 	Client(int _socket_fd);
 	Client();
 	~Client();
 	void setNickName(std::string nick);
-	void setuserCheck();
-	void setnickCheck();
-	void setpassCheck();
+	void setuserCheckPlus();
+	void setnickCheckPlus();
+	void setpassCheckPlus();
 	void setzvezda(std::string str);
 	void setRealname(std::string str);
 	void setRealNamePlus(std::string str);
@@ -50,5 +51,11 @@ public:
     void setOfflineOnlineMinus();
     int getId();
     int getOffineOnline();
+    void setIP(std::string _ip);
+    std::string getIP();
+    std::string getUserName();
+    void setuserCheckMinus();
+    void setnickCheckMinus();
+    void setpassCheckMinus();
 
 };
