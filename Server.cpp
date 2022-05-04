@@ -103,7 +103,8 @@ int Server::startServer(int ac, char **av)
                 flag = 1;
 			}
 		}
-		checkTerminal(new_socket);
+        if (!mapa.empty())
+		    checkTerminal(new_socket);
 	}
 	return (1);
 }
@@ -149,9 +150,7 @@ void Server::checkTerminal(int *_new_socket)
                 if (str[res - 1] == '\n')
                     checkCommand(str, new_socket[idClient], idClient);
             }
-            if (flag == 1)
-            {
-                if (mapa[new_socket[idClient]]->getnickCheck() == 1 \
+            if (mapa[new_socket[idClient]]->getnickCheck() == 1 \
             && mapa[new_socket[idClient]]->getpassCheck() == 1 \
             && mapa[new_socket[idClient]]->getuserCheck() == 1 \
             && mapa[new_socket[idClient]]->getOffineOnline() == 0)
@@ -168,7 +167,7 @@ void Server::checkTerminal(int *_new_socket)
                         motdText(mapa[new_socket[idClient]]->getNickName(), i);
                         send(new_socket[idClient], mot, strlen(mot), 0);
 //                        std::cout << mot;
-                        flag = 0;
+                        // flag = 0;
                         i++;
                     }
                 }
@@ -182,7 +181,6 @@ void Server::checkTerminal(int *_new_socket)
                     allClients--;
                     delete mapa[new_socket[idClient]];
                 }
-            }
             idClient++;
         }
         

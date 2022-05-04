@@ -86,10 +86,10 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
             mapa[_socket]->setHostName(commandClient[++i]);
             mapa[_socket]->setRealname(commandClient[++i]);
             writeCommandClient(q, i, _socket);
+            i += 2;
             mapa[_socket]->setuserCheck();
             deleteCommand();
-            if (commandClient[i + 2] == "PASS" || commandClient[i + 2] == "NICK"){
-                i += 2;
+            if (commandClient[i] == "PASS" || commandClient[i] == "NICK"){
                 continue ;
             }
             else{
@@ -101,6 +101,7 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
             writeCommandClient(q, i, _socket);
             mapa[_socket]->setnickCheck();
             deleteCommand();
+            i += 2;
             if (commandClient[i] == "PASS" || commandClient[i] == "USER")
                 continue ;
             else{
@@ -139,6 +140,7 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
         }
         if (str[i] == '#')
             privmsgChannel(str, i);
+        deleteCommand();
     }
     return (false);
 }
@@ -156,12 +158,12 @@ void Server::deleteCommand() {
 }
 
 void Server::error(int error, int _socket) {
-    std::string msg[BUFFER_SIZE];
+    std::string msg;
     char *str;
-//    if (error == 451)
-//        msg += ":IRC 451 :You have not registered\n";
-//    if (error == 403)
-//        msg += ":IRC 403 " + mapa[_socket]->getNickName() + " " + commandClient[1] + " :No such channel\n";
-    strcpy(str, msg->c_str());
+   if (error == 451)
+       msg += ":IRC 451 :You have not registered\n";
+   if (error == 403)
+       msg += ":IRC 403 " + mapa[_socket]->getNickName() + " " + commandClient[1] + " :No such channel\n";
+    strcpy(str, msg.c_str());
     send(_socket, str, strlen(str), 0);
 }
