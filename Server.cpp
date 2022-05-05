@@ -165,15 +165,10 @@ void Server::checkTerminal(int *_new_socket)
                         mapa[new_socket[idClient]]->setOfflineOnlinePlus();
                         std::cout << mapa[new_socket[idClient]]->getNickName() << " Registed\n";
                     }
-                    int i = 1;
-                    while (i < 4)
-                    {
-                        motdText(mapa[new_socket[idClient]]->getNickName(), i);
-                        send(new_socket[idClient], mot, strlen(mot), 0);
+                    motdText(mapa[new_socket[idClient]]->getNickName());
+                    send(new_socket[idClient], mot, strlen(mot), 0);
 //                        std::cout << mot;
                         // flag = 0;
-                        i++;
-                    }
                 }
                 else if (mapa[new_socket[idClient]]->getpassCheck() == 0 \
                 && mapa[new_socket[idClient]]->getnickCheck() == 1 \
@@ -191,24 +186,14 @@ void Server::checkTerminal(int *_new_socket)
 	}
 }
 
-void Server::motdText(std::string nick, int i) {
+void Server::motdText(std::string nick) {
     std::string Motd;
     
-    if (i == 1){
-        Motd = "375 " + nick + " :- " + SERVER_IP + " Message of the day - \n";
-        strcpy(mot, Motd.c_str());
-        return;
-    }
-    if (i == 2){
-        Motd = "372 " + nick + " :- " + buffer + "\n";
-        strcpy(mot, Motd.c_str());
-        return;
-    }
-    if (i == 3){
-        Motd = "376 " + nick + " :- " + "END of /MOTD command\n";
-        strcpy(mot, Motd.c_str());
-        return;
-    }
+    Motd = ":IRC 375 " + nick + ":-" + SERVER_IP + " Message of the day - \n";
+    Motd += ":IRC 372 " + nick + ":-" + buffer + "\n";
+    Motd += ":IRC 376 " + nick + " :End of /MOTD command\n";
+    strcpy(mot, Motd.c_str());
+    return;
 }
 
 int Server::strq(char strq[BUFFER_SIZE])

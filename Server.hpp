@@ -71,7 +71,7 @@ public:
         bool bilding();
         bool checkPassword(std::string pass);
 		bool checkCommand(char *str, int _socket, int idClient);
-        void motdText(std::string nick, int i);
+        void motdText(std::string nick);
         char mot[BUFFER_SIZE];
         int strq(char strq[BUFFER_SIZE]);
 		

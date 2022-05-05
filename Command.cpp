@@ -86,9 +86,16 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
             mapa[_socket]->setUserName(commandClient[++i]);
             mapa[_socket]->setzvezda(commandClient[++i]);
             mapa[_socket]->setHostName(commandClient[++i]);
-            mapa[_socket]->setRealname(commandClient[++i]);
+            i++;
+            while (commandClient[i] != "\n"){
+                mapa[_socket]->setRealname(commandClient[i]);
+                i++;
+            }
+            if (commandClient[i] == "\n")
+                i++;
+            else
+                i += 2;
             writeCommandClient(q, i, _socket);
-            i += 2;
             mapa[_socket]->setuserCheckPlus();
             deleteCommand(i);
             if (commandClient[i] == "PASS" || commandClient[i] == "NICK"){
@@ -133,8 +140,10 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
         }
         if (str[i] == '#')
         {
-            if (str[i - 1] == ' ')
+            if (str[i - 1] == ' '){
                 join(_socket);
+                writeCommandClient(q, i, _socket);
+            }
             else
                 error(403, _socket);
         }
