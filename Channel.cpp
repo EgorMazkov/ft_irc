@@ -43,12 +43,14 @@ void Server::join(int _socket) {
     int i = 1;
     chann = chan.find(commandClient[i]);
     if (chann != chan.end()){
-       if (commandClient[3] == chan[commandClient[i]]->getPassword()){
+       if (commandClient[2] == chan[commandClient[i]]->getPassword()){
            chan[commandClient[i]]->setClients(_socket);
            std::cout << mapa[_socket]->getNickName() << " added to channel: " << chan[commandClient[i]]->getChannel() << std::endl;
            return;
        }
-    
+        else{
+           error(401, _socket);
+        }
     }
     else if (numberChannelPasswordChannel >= 0){
         chan.insert(std::make_pair(commandClient[i], new Channel()));

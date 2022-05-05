@@ -231,7 +231,7 @@ void Server::privmsgClient(int _socket) {
                         msg += ": ";
                 }
                 strcpy(msg1, msg.c_str());
-                send(new_socket[i], msg1, strlen(msg1), 0);
+                send(new_socket[i], msg1, strlen(msg1), 1);
                 writeCommandClient(q, i, _socket);
                 deleteCommand(q);
                 return ;
