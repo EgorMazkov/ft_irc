@@ -67,6 +67,9 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
     q = idClient + 1;
     flag = i;
     i = 0;
+    if (commandClient[i] == "ISON"){
+        deleteCommand(10);
+    }
     while (mapa[_socket]->getOffineOnline() != 1){
         if (commandClient[i] == "PASS"){
             if (checkPassword(commandClient[++i])){
@@ -171,7 +174,7 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
     if (commandClient[i] == "KICK"){
         kick(_socket);
     }
-    // deleteCommand(i);
+    deleteCommand(100);
     return (false);
 }
 
@@ -218,18 +221,24 @@ void Server::privmsgClient(int _socket) {
     int q = 1;
     while (i != allClients){
         if (mapa[new_socket[i]]->getNickName().compare(commandClient[q]) == 0){
-            msg += ":" + mapa[_socket]->getNickName() + "!" + mapa[_socket]->getUserName() + "@" + mapa[_socket]->getIP() + " ";
-            q = 0;
-            while (!commandClient[q].empty()){
-                msg += commandClient[q] + " ";
-                q++;
-                if (q == 2)
-                    msg += ": ";
+            if (mapa[new_socket[i]]->getOffineOnline() == 1){
+                msg += ":" + mapa[_socket]->getNickName() + "!" + mapa[_socket]->getUserName() + "@" + mapa[_socket]->getIP() + " ";
+                q = 0;
+                while (!commandClient[q].empty()){
+                    msg += commandClient[q] + " ";
+                    q++;
+                    if (q == 2)
+                        msg += ": ";
+                }
+                strcpy(msg1, msg.c_str());
+                send(new_socket[i], msg1, strlen(msg1), 0);
+                writeCommandClient(q, i, _socket);
+                deleteCommand(q);
+                return ;
             }
-            strcpy(msg1, msg.c_str());
-            send(new_socket[i], msg1, strlen(msg1), 0);
-            deleteCommand(q);
-            return ;
+            else {
+                
+            }
         }
         i++;
     }

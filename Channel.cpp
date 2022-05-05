@@ -21,7 +21,7 @@ void Channel::setPassword(std::string passwordChannel) {
     this->Password = passwordChannel;
 }
 
-//std::string Channel::getPassword(){return (this->Password);}
+std::string Channel::getPassword(){return (this->Password);}
 
 void Channel::setKickClient(int i) {
     this->clients[i] = -1;
@@ -43,11 +43,11 @@ void Server::join(int _socket) {
     int i = 1;
     chann = chan.find(commandClient[i]);
     if (chann != chan.end()){
-//        if (commandClient[3] == chan[commandClient[i]]->getPassword()){
-//            chan[commandClient[i]]->setClients(_socket);
-//            std::cout << mapa[_socket]->getNickName() << " added to channel: " << chan[commandClient[i]]->getChannel() << std::endl;
-//            return;
-//        }
+       if (commandClient[3] == chan[commandClient[i]]->getPassword()){
+           chan[commandClient[i]]->setClients(_socket);
+           std::cout << mapa[_socket]->getNickName() << " added to channel: " << chan[commandClient[i]]->getChannel() << std::endl;
+           return;
+       }
     
     }
     else if (numberChannelPasswordChannel >= 0){

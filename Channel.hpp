@@ -27,6 +27,7 @@ public:
     int socketClientForChannel(int i);
     int getAdminChannel();
     void setKickClient(int i);
+    std::string getPassword();
     
     
 //    void join(int _socket, std::string av0, std::string av1, std::string av2, int flag);
