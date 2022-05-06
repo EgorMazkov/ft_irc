@@ -168,14 +168,14 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
     }
     if (commandClient[i] == "PRIVMSG") {
         int i = 0;
-        while (str[i] == '#' || str[i] == '&' || str[i] == '+' || str[i] == '!' || str[i] == ') {
+        while (str[i] == '#' || str[i] == '&' || str[i] == '+' || str[i] == '!') {
             if (str[i] == '\n'){
                 privmsgClient(_socket);
                 return (false);
             }
             i++;
         }
-        if (str[i] == '#' || str[i] == '&' || str[i] == '+' || str[i] == '!' || str[i] == '){
+        if (str[i] == '#' || str[i] == '&' || str[i] == '+' || str[i] == '!'){
             if (str[i - 1] == ' ')
                 privmsgChannel(str, i, _socket);
             else
