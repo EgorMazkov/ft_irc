@@ -67,7 +67,7 @@ public:
 		void	init(std::string port, std::string password);
 		void	initial(char **av);
 		std::pair<int, std::string> connect();
-		void checkTerminal(int *_new_socket);
+		void checkTerminal();
         bool bilding();
         bool checkPassword(std::string pass);
 		bool checkCommand(char *str, int _socket, int idClient);
@@ -91,4 +91,5 @@ public:
         void error(int error, int _socket);
         void privmsgClient(int _socket);
         void kick(int _socket);
+        void ison(int _socket);
 };

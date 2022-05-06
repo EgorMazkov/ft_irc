@@ -44,14 +44,22 @@ int Server::splitCommand(char *str) {
 void Server::writeCommandClient(int idClient, int q, int _socket)
 {
     int i = 0;
-    std::cout << "Client #" << idClient << " ";
+    if (mapa[_socket]->getnickCheck() == 1)
+        std::cout << "nick: " << mapa[_socket]->getNickName() << " ";
+    else
+        std::cout << "Client #" << idClient << " ";
     while (commandClient[i] == "")
         i++;
     std::cout << "<" << commandClient[i] << "> ";
     i++;
     while (commandClient[i] != "\n"){
-        while (commandClient[i] == "")
+        while (commandClient[i] == ""){
             i++;
+            if (commandClient[i] == "\n"){
+                std::cout << std::endl;
+                return;
+            }
+        }
         std::cout << "<" << commandClient[i] << "> ";
                  i++;
     }
@@ -68,7 +76,9 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
     flag = i;
     i = 0;
     if (commandClient[i] == "ISON"){
-        deleteCommand(10);
+        ison(_socket);
+        deleteCommand(100);
+        return (false);
     }
     while (mapa[_socket]->getOffineOnline() != 1){
         if (commandClient[i] == "PASS"){
@@ -133,6 +143,7 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
         std::cout << mapa[_socket]->getNickName() << ": disconnected\n";
         mapa[_socket]->setOfflineOnlineMinus();
         allClients--;
+        return (false);
     }
     if (commandClient[i] == "JOIN"){
         i = 0;
@@ -170,10 +181,14 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
                 error(403, _socket);
         }
         deleteCommand(i);
+        return (false);
     }
     if (commandClient[i] == "KICK"){
         kick(_socket);
+        return (false);
     }
+    error(421, _socket);
+    writeCommandClient(i, q, _socket);
     deleteCommand(100);
     return (false);
 }
@@ -200,15 +215,28 @@ void Server::deleteCommand(int q) {
 
 void Server::error(int error, int _socket) {
     std::string msg;
+    int i = 0;
     char str[BUFFER_SIZE];
+    msg = ":IRC ";
    if (error == 451)
-       msg += ":IRC 451 :You have not registered\n";
+       msg += "451 :You have not registered";
    if (error == 403)
-       msg += ":IRC 403 " + mapa[_socket]->getNickName() + " " + commandClient[1] + " :No such channel\n";
+       msg += "403 " + mapa[_socket]->getNickName() + " " + commandClient[1] + " :No such channel";
    if (error == 482)
-       msg += ":IRC 451" +mapa[_socket]->getNickName() + ":You're not channel operator\n";
+       msg += "451 " +mapa[_socket]->getNickName() + ":You're not channel operator";
    if (error == 401)
-       msg += ":IRC 401" + mapa[_socket]->getNickName() + chan[commandClient[1]]->getChannel() + " :No such nick/channel\n";
+       msg += "401 " + mapa[_socket]->getNickName() + chan[commandClient[1]]->getChannel() + " :No such nick/channel";
+   if (error == 421){
+       msg += "421 " + mapa[_socket]->getNickName() + " ";
+       while (!commandClient[i].empty()){
+        if (commandClient[i] != "\n")
+            msg += commandClient[i++] + " ";
+        else
+            break;
+       }
+       msg += ":Unknown command";
+   }
+   msg += "\n";
     strcpy(str, msg.c_str());
     send(_socket, str, strlen(str), 0);
     return ;
@@ -242,4 +270,30 @@ void Server::privmsgClient(int _socket) {
         }
         i++;
     }
+}
+
+void Server::ison(int _socket) {
+    std::string msg;
+    char *str;
+    int i = 0;
+    int q = 1;
+    int checkClients = 0;
+    msg = ":IRC 303 " + mapa[_socket]->getNickName() + " :";
+    while (new_socket[i] != -1){
+        if (mapa[new_socket[i]]->getNickName() == commandClient[q] && mapa[new_socket[i]]->getOffineOnline() == 1){
+            msg += mapa[new_socket[i]]->getNickName() + " ";
+            checkClients = 1;
+        }
+        i++;
+        if (checkClients == 1 && commandClient[q + 1] != "\n"){
+            q++;
+            i = 0;
+            checkClients = 0;
+            continue;
+        }
+    }
+    msg += "\n";
+    writeCommandClient(q, i, _socket);
+    strcpy(str, msg.c_str());
+    send (_socket, str, strlen(str), 0);
 }
