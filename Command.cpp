@@ -164,17 +164,18 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
         else
             error(403, _socket);
         deleteCommand(i);
+        return (false);
     }
     if (commandClient[i] == "PRIVMSG") {
         int i = 0;
-        while (str[i] != '#') {
+        while (str[i] == '#' || str[i] == '&' || str[i] == '+' || str[i] == '!' || str[i] == ') {
             if (str[i] == '\n'){
                 privmsgClient(_socket);
                 return (false);
             }
             i++;
         }
-        if (str[i] == '#'){
+        if (str[i] == '#' || str[i] == '&' || str[i] == '+' || str[i] == '!' || str[i] == '){
             if (str[i - 1] == ' ')
                 privmsgChannel(str, i, _socket);
             else
@@ -236,7 +237,19 @@ void Server::error(int error, int _socket) {
        }
        msg += ":Unknown command";
    }
-   msg += "\n";
+   if (error == 331){
+       msg += "331 " + mapa[_socket]->getNickName() + chan[commandClient[1]]->getChannel() + " :No topic is set";
+   }
+    if (error == 353) {
+        msg += "353 " + mapa[_socket]->getNickName() + "=" + chan[commandClient[1]]->getChannel() + " @";
+        while (i != chan[commandClient[1]]->getNumClient()){
+            msg += mapa[chan[commandClient[1]]->socketClientForChannel(i)]->getNickName() + " ";
+            i++;
+        }
+    }
+    if (error == 366)
+        msg += "366 " + mapa[_socket]->getNickName() + chan[commandClient[1]]->getChannel() + " :End of /Names list";
+   msg += '\n';
     strcpy(str, msg.c_str());
     send(_socket, str, strlen(str), 0);
     return ;

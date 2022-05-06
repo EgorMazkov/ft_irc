@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <sys/socket.h>
+#define BUFFER_SIZE 1024
 
 class Client
 {
@@ -20,6 +21,8 @@ private:
 	int userCheck;
 	int Registed;
     int offlineOnline;
+    std::string myChannels[BUFFER_SIZE];
+    int numberMyChannel;
 	
 
 	std::string Realname;
@@ -41,6 +44,7 @@ public:
 	void setRealNamePlus(std::string str);
 	void setUserName(std::string str);
 	void setHostName(std::string str);
+    void setMyChannel(std::string nameChannel);
 	int getuserCheck();
 	int getnickCheck();
 	int getpassCheck();

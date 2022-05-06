@@ -40,12 +40,26 @@ std::string Channel::getChannel() {
 Channel::~Channel(){}
 
 void Server::join(int _socket) {
+    std::string msg;
+    char str[BUFFER_SIZE];
     int i = 1;
     chann = chan.find(commandClient[i]);
     if (chann != chan.end()){
        if (commandClient[2] == chan[commandClient[i]]->getPassword()){
            chan[commandClient[i]]->setClients(_socket);
-           std::cout << mapa[_socket]->getNickName() << " added to channel: " << chan[commandClient[i]]->getChannel() << std::endl;
+           msg += ":" + mapa[_socket]->getNickName() + "!" + mapa[_socket]->getUserName() + "@" + mapa[_socket]->getIP() + " ";
+           i = 0;
+           while (!commandClient[i].empty()){
+               msg += commandClient[i] + " ";
+               i++;
+               if (i == 2)
+                   msg += ": ";
+           }
+           strcpy(str, msg.c_str());
+           send(chan[commandClient[1]]->getAdminChannel(), str, strlen(str), 0);
+           error(331, _socket);
+           error(353, _socket);
+           error(366, _socket);
            return;
        }
         else{
@@ -55,11 +69,14 @@ void Server::join(int _socket) {
     else if (numberChannelPasswordChannel >= 0){
         chan.insert(std::make_pair(commandClient[i], new Channel()));
         chan[commandClient[i]]->setChannel(commandClient[i]);
+        mapa[_socket]->setMyChannel(commandClient[i]);
         chan[commandClient[i]]->setPassword(commandClient[i + 1]);
         chan[commandClient[i]]->setAdminChannel(_socket);
         chan[commandClient[i]]->setClients(_socket);
-        std::cout << "Channel created. Admin: " + mapa[_socket]->getNickName() << std::endl;
         numberChannelPasswordChannel++;
+        error(331, _socket);
+        error(353, _socket);
+        error(366, _socket);
         return;
     }
 }

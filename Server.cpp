@@ -148,11 +148,11 @@ void Server::motdText(std::string nick)
 {
 	std::string Motd;
 
-	Motd = ":IRC 375 " + nick + ":-" + SERVER_IP + " Message of the day - \n";
-	Motd += ":IRC 372 " + nick + ":-" + buffer + "\n";
-	Motd += ":IRC 376 " + nick + " :End of /MOTD command\n";
-	strcpy(mot, Motd.c_str());
-	return;
+    Motd += ":IRC 375 " + nick + ":-" + SERVER_IP + " Message of the day - \n";
+    Motd += ":IRC 372 " + nick + ":-" + buffer + "\n";
+    Motd += ":IRC 376 " + nick + " :End of /MOTD command\n";
+    strcpy(mot, Motd.c_str());
+    return;
 }
 
 int Server::strq(char strq[BUFFER_SIZE])

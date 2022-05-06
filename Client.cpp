@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(){}
+Client::Client(): numberMyChannel(0){}
 
 Client::Client(int _socket_fd): socket_fd(_socket_fd), id(++numberClient), passCheck(0), userCheck(0), nickCheck(0), nickname(""), Registed(0), offlineOnline(0)
 {std::cout << "Client №" << id << " connected\n";}
@@ -31,6 +31,11 @@ std::string Client::getIP() {return this->ip;}
 void Client::setRealNamePlus(std::string str) {
     this->Realname += ' ';
     this->Realname += str;
+}
+
+void Client::setMyChannel(std::string nameChannel) {
+    this->myChannels[numberMyChannel] = nameChannel;
+    numberMyChannel++;
 }
 
 Client::~Client(){}
