@@ -38,6 +38,8 @@ int Server::splitCommand(char *str) {
         if (!str[q])
             break ;
     }
+    if (str[q] == '\n' && commandClient[i - 1] != "\n")
+        commandClient[i] = '\n';
     return (i);
 }
 
@@ -60,8 +62,9 @@ void Server::writeCommandClient(int idClient, int _socket)
                 return;
             }
         }
-        std::cout << "<" << commandClient[i] << "> ";
-                 i++;
+        if (commandClient[i] != "")
+            std::cout << "<" << commandClient[i] << "> ";
+        i++;
     }
     std::cout << std::endl;
 }
@@ -78,6 +81,11 @@ void Server::checkCommand(char *str, int _socket, int idClient) {
         if (commandClient[i] == "PASS"){i = pass(_socket, i);}
         if (commandClient[i] == "USER"){i = user(_socket, i);}
         if (commandClient[i] == "NICK"){i = nick(_socket, i);}
+        if (!commandClient[i].empty()){
+            error(421, _socket, 0);
+            writeCommandClient(idClient + 1, _socket);
+            deleteCommand(100);
+        }
         return;
     }
     if (commandClient[i] == "QUIT"){quit(_socket); return;}

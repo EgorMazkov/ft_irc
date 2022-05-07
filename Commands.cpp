@@ -152,7 +152,7 @@ int Server::user(int _socket, int iterator) {
     }
     if (i < 5){
         error(461, _socket, 0);
-        deleteCommand(i);
+        deleteCommand(iterator);
         return (0);
     }
     mapa[_socket]->setUserName(commandClient[++iterator]);
