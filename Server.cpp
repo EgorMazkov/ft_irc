@@ -92,7 +92,6 @@ int Server::startServer(int ac, char **av)
 				if (cl == mapa.end())
 					mapa.insert(std::make_pair(new_socket[allClients], new Client(new_socket[allClients])));
 				mapa[new_socket[idClient]]->setIP(pair.second);
-				flag = 1;
 			}
 		}
 		if (!mapa.empty())
@@ -123,7 +122,13 @@ void Server::checkTerminal(){
 				if (str[res - 1] == '\n')
 					checkCommand(str, new_socket[idClient], idClient);
 			}
-			if (mapa[new_socket[idClient]]->getnickCheck() == 1 && mapa[new_socket[idClient]]->getpassCheck() == 1 && mapa[new_socket[idClient]]->getuserCheck() == 1 && mapa[new_socket[idClient]]->getOffineOnline() == 0)
+            if (res == -1){
+                mapa[new_socket[idClient]]->setCheckPing();
+            }
+			if (mapa[new_socket[idClient]]->getnickCheck() == 1 
+			&& mapa[new_socket[idClient]]->getpassCheck() == 1 
+			&& mapa[new_socket[idClient]]->getuserCheck() == 1 
+			&& mapa[new_socket[idClient]]->getOffineOnline() == 0)
 			{
 				if (mapa[new_socket[idClient]]->getOffineOnline() == 0 && mapa[new_socket[idClient]]->getRegisted() != 0)
 					mapa[new_socket[idClient]]->setOfflineOnlinePlus();
@@ -139,6 +144,8 @@ void Server::checkTerminal(){
 				allClients--;
 				mapa.erase(new_socket[idClient]);
 			}
+            if (mapa[new_socket[idClient]]->getCheckPing() == 10000000 && mapa[new_socket[idClient]]->getOffineOnline() == 1)
+                pingServer(new_socket[idClient]);
 			idClient++;
 		}
 	}

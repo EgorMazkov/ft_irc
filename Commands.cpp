@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "Client.hpp"
 
 void Server::quit(int _socket) {
     deleteCommand(2);
@@ -238,4 +239,37 @@ void Server::ping(int _socket) {
     send(_socket, str, strlen(str), 0);
     writeCommandClient(idClient + 1, _socket);
     deleteCommand(10);
+}
+
+void Server::pingServer(int _socket)
+{
+    std::string msg;
+    char str[BUFFER_SIZE];
+    if (mapa[_socket]->getflagCheckPingPong() == 1){
+        close(_socket);
+        mapa[_socket]->minusFlagCheckPingPong();
+        std::cout << mapa[_socket]->getNickName() << ": disconnected\n";
+        mapa[_socket]->nullCheckPing();
+        mapa[_socket]->setOfflineOnlineMinus();
+        mapa[_socket]->setnickCheckMinus();
+        mapa[_socket]->setpassCheckMinus();
+        mapa[_socket]->setuserCheckMinus();
+    }
+    else{
+        mapa[_socket]->plusFlagCheckPingPong();
+        msg += "PING ircserv\n";
+        strcpy(str, msg.c_str());
+        send(_socket, str, strlen(str), 0);
+        mapa[_socket]->nullCheckPing();
+    }
+}
+
+void Server::pong(int _socket) {
+    int i = 1;
+    if (commandClient[i] == "ircserv"){
+        mapa[_socket]->minusFlagCheckPingPong();
+        writeCommandClient(idClient, _socket);
+        deleteCommand(10);
+        return ;
+    }
 }

@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(): numberMyChannel(0){}
+Client::Client(): numberMyChannel(0), checkPing(0), flagCheckPingPong(0){}
 
 Client::Client(int _socket_fd): socket_fd(_socket_fd), id(++numberClient), passCheck(0), userCheck(0), nickCheck(0), nickname(""), Registed(0), offlineOnline(0)
 {std::cout << "Client №" << id << " connected\n";}
@@ -28,14 +28,21 @@ void    Client::setOfflineOnlineMinus() {--this->offlineOnline;}
 int    Client::getId() {return (this->id);}
 void Client::setIP(std::string _ip) {this->ip = _ip;}
 std::string Client::getIP() {return this->ip;}
+int Client::getCheckPing() {return (this->checkPing);}
+void Client::setCheckPing() {this->checkPing++;}
+void Client::nullCheckPing(){this->checkPing = 0;}
+
 void Client::setRealNamePlus(std::string str) {
     this->Realname += ' ';
     this->Realname += str;
 }
-
 void Client::setMyChannel(std::string nameChannel) {
     this->myChannels[numberMyChannel] = nameChannel;
     numberMyChannel++;
 }
+
+void Client::plusFlagCheckPingPong(){this->flagCheckPingPong = 1;}
+void Client::minusFlagCheckPingPong(){this->flagCheckPingPong = 0;}
+int Client::getflagCheckPingPong(){return (this->flagCheckPingPong);}
 
 Client::~Client(){}

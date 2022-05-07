@@ -69,6 +69,7 @@ void Server::writeCommandClient(int idClient, int _socket)
 void Server::checkCommand(char *str, int _socket, int idClient) {
     int i;
     
+    mapa[_socket]->nullCheckPing();
     deleteCommand(1);
     i = splitCommand(str);
     i = 0;
@@ -84,6 +85,7 @@ void Server::checkCommand(char *str, int _socket, int idClient) {
     if (commandClient[i] == "PRIVMSG") { allowedCharacterPrivmsg(_socket);return;}
     if (commandClient[i] == "KICK"){kick(_socket);return;}
     if (commandClient[i] == "PING"){ping(_socket); return;}
+    if (commandClient[i] == "PONG"){pong(_socket); return;}
     error(421, _socket, 0);
     writeCommandClient(idClient + 1, _socket);
     deleteCommand(100);

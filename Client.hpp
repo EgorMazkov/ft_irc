@@ -23,6 +23,8 @@ private:
     int offlineOnline;
     std::string myChannels[BUFFER_SIZE];
     int numberMyChannel;
+    int checkPing;
+    int flagCheckPingPong;
 	
 
 	std::string Realname;
@@ -61,5 +63,10 @@ public:
     void setuserCheckMinus();
     void setnickCheckMinus();
     void setpassCheckMinus();
-
+    void setCheckPing();
+    int getCheckPing();
+    void nullCheckPing();
+    void plusFlagCheckPingPong();
+    void minusFlagCheckPingPong();
+    int getflagCheckPingPong();
 };
