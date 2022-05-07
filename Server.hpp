@@ -94,4 +94,5 @@ public:
         int nick(int _socket, int iterator);
         void allowedCharacterJoin(int _socket);
         void allowedCharacterPrivmsg(int _socket);
+        void ping(int _socket);
 };

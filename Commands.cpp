@@ -68,6 +68,8 @@ void Server::error(int error, int _socket, int iterator) {
         msg += "433 " + commandClient[iterator] + " :Nickname is already in use";
     if (error == 461)
         msg += "461 " + mapa[_socket]->getNickName() + " :Not enough parameters";
+    if (error == 409)
+        msg += "409 " + mapa[_socket]->getNickName() + " :No origin specified";
     msg += '\n';
     strcpy(str, msg.c_str());
     send(_socket, str, strlen(str), 0);
@@ -187,7 +189,6 @@ int Server::nick(int _socket, int iterator) {
 void Server::allowedCharacterJoin(int _socket) {
     int i = 0;
 	while (str[i] != '\n'){
-		std::cout << str[i] << std::endl;
 		if (str[i] != '#' && str[i] != '&' && str[i] != '+' && str[i] != '!')
 			i++;
 		else{
@@ -199,10 +200,9 @@ void Server::allowedCharacterJoin(int _socket) {
         	else
         	    error(403, _socket, 0);
 		}
-		
 	}
-    // else
-    //     error(403, _socket, 0);
+	if (str[i] == '\n')
+		error(403, _socket, 0);
     deleteCommand(i);
     return;
 }
@@ -225,4 +225,17 @@ void Server::allowedCharacterPrivmsg(int _socket) {
     }
     deleteCommand(i);
     return;
+}
+
+void Server::ping(int _socket) {
+    int i = 1;
+    char str[BUFFER_SIZE];
+    std::string msg;
+    if (commandClient[i] == "")
+        error(409, _socket, 0);
+    msg = ":IRC PONG " + commandClient[i] + '\n';
+    strcpy(str, msg.c_str());
+    send(_socket, str, strlen(str), 0);
+    writeCommandClient(idClient + 1, _socket);
+    deleteCommand(10);
 }

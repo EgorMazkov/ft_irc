@@ -83,6 +83,7 @@ void Server::checkCommand(char *str, int _socket, int idClient) {
     if (commandClient[i] == "JOIN"){ allowedCharacterJoin(_socket);return;}
     if (commandClient[i] == "PRIVMSG") { allowedCharacterPrivmsg(_socket);return;}
     if (commandClient[i] == "KICK"){kick(_socket);return;}
+    if (commandClient[i] == "PING"){ping(_socket); return;}
     error(421, _socket, 0);
     writeCommandClient(idClient + 1, _socket);
     deleteCommand(100);
