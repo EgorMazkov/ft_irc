@@ -186,22 +186,23 @@ int Server::nick(int _socket, int iterator) {
 
 void Server::allowedCharacterJoin(int _socket) {
     int i = 0;
-    while (str[i] != '#' || str[i] != '&' || str[i] != '+' || str[i] != '!'){
-        if (str[i] == '\n')
-            break ;
-        i++;
-    }
-    if (str[i] == '#' || str[i] == '&' || str[i] == '+' || str[i] == '!')
-    {
-        if (str[i - 1] == ' '){
+	while (str[i] != '\n'){
+		std::cout << str[i] << std::endl;
+		if (str[i] != '#' && str[i] != '&' && str[i] != '+' && str[i] != '!')
+			i++;
+		else{
+			 if (str[i - 1] == ' '){
             join(_socket);
             writeCommandClient(idClient + 1, _socket);
-        }
-        else
-            error(403, _socket, 0);
-    }
-    else
-        error(403, _socket, 0);
+			break ;
+        	}
+        	else
+        	    error(403, _socket, 0);
+		}
+		
+	}
+    // else
+    //     error(403, _socket, 0);
     deleteCommand(i);
     return;
 }
