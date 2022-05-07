@@ -168,9 +168,10 @@ bool Server::checkCommand(char *str, int _socket, int idClient) {
     }
     if (commandClient[i] == "PRIVMSG") {
         int i = 0;
-        while (str[i] == '#' || str[i] == '&' || str[i] == '+' || str[i] == '!') {
+        while (str[i] != '#' || str[i] != '&' || str[i] != '+' || str[i] != '!') {
             if (str[i] == '\n'){
                 privmsgClient(_socket);
+                deleteCommand(i);
                 return (false);
             }
             i++;
