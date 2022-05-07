@@ -46,9 +46,6 @@ public:
 		int				i;
 		int				idClient;
 		char		client[100];
-		int				server;
-		int				ret;
-		bool			isExit;
 		socklen_t		size;
 		Server			*serv;
 		struct sockaddr_in	server_adress;
@@ -70,16 +67,16 @@ public:
 		void checkTerminal();
         bool bilding();
         bool checkPassword(std::string pass);
-		bool checkCommand(char *str, int _socket, int idClient);
+		void checkCommand(char *str, int _socket, int idClient);
         void motdText(std::string nick);
         char mot[BUFFER_SIZE];
         int strq(char strq[BUFFER_SIZE]);
-		
+		bool checkNickClients(int q);
 		
 		
 		int splitCommand(char *str);
         std::string commandClient[BUFFER_SIZE];
-        void writeCommandClient(int idClient, int q, int _socket);
+        void writeCommandClient(int idClient, int _socket);
         void deleteCommand(int q);
 		
 		
@@ -87,9 +84,14 @@ public:
 		// command
         void quit(int _socket);
         void join(int _socket);
-        void privmsgChannel(char *str, int i, int _socket);
-        void error(int error, int _socket);
+        void privmsgChannel(int i, int _socket);
+        void error(int error, int _socket, int iterator);
         void privmsgClient(int _socket);
         void kick(int _socket);
         void ison(int _socket);
+        int pass(int _socket, int iterator);
+        int user(int _socket, int iterator);
+        int nick(int _socket, int iterator);
+        void allowedCharacterJoin(int _socket);
+        void allowedCharacterPrivmsg(int _socket);
 };

@@ -57,13 +57,13 @@ void Server::join(int _socket) {
            }
            strcpy(str, msg.c_str());
            send(chan[commandClient[1]]->getAdminChannel(), str, strlen(str), 0);
-           error(331, _socket);
-           error(353, _socket);
-           error(366, _socket);
+           error(331, _socket, 0);
+           error(353, _socket, 0);
+           error(366, _socket, 0);
            return;
        }
         else{
-           error(401, _socket);
+           error(401, _socket, 0);
         }
     }
     else if (numberChannelPasswordChannel >= 0){
@@ -74,16 +74,17 @@ void Server::join(int _socket) {
         chan[commandClient[i]]->setAdminChannel(_socket);
         chan[commandClient[i]]->setClients(_socket);
         numberChannelPasswordChannel++;
-        error(331, _socket);
-        error(353, _socket);
-        error(366, _socket);
+        error(331, _socket, 0);
+        error(353, _socket, 0);
+        error(366, _socket, 0);
         return;
     }
 }
 
-void Server::privmsgChannel(char *str, int i, int _socket) {
+void Server::privmsgChannel(int i, int _socket) {
     i = 2;
     std::string msg;
+    char str[BUFFER_SIZE];
     int q = 0;
     while (_socket != chan[commandClient[1]]->socketClientForChannel(q))
         q++;
@@ -108,7 +109,7 @@ void Server::privmsgChannel(char *str, int i, int _socket) {
         }
     }
     else{
-        error(401, _socket);
+        error(401, _socket, 0);
     }
 }
 
@@ -118,7 +119,7 @@ void Server::kick(int _socket) {
     char str[BUFFER_SIZE];
     int _socketKick;
     if (_socket != chan[commandClient[i]]->getAdminChannel())
-        error(403, _socket);
+        error(403, _socket, 0);
     chann = chan.find(commandClient[i]);
     if (chann != chan.end()){
         while (commandClient[2] != mapa[new_socket[i]]->getNickName())
@@ -131,7 +132,7 @@ void Server::kick(int _socket) {
             if (_socketKick == chan[commandClient[1]]->socketClientForChannel(i))
                 chan[commandClient[1]]->setKickClient(i);
             else{
-                error(401, _socket);
+                error(401, _socket, 0);
                 return;
             }
         }

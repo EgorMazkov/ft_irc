@@ -162,3 +162,15 @@ int Server::strq(char strq[BUFFER_SIZE])
 		i++;
 	return (i);
 }
+
+bool Server::checkNickClients(int q) {
+    int i = 0;
+    while (new_socket[i] != -1){
+		if (new_socket[i] == 0)
+			return (true);
+        if (commandClient[q + 1] == mapa[new_socket[i]]->getNickName())
+            return (false);
+        i++;
+    }
+    return (true);
+}
