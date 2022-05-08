@@ -35,16 +35,13 @@ bool Server::bilding()
 {
 	int i = 1;
 	socket1 = socket(AF_INET, SOCK_STREAM, 0);
-	std::cout << socket1 << std::endl;
 	if (socket1 < 0)
 	{
 		std::cout << ERROR_S << "establishing socket error.\n";
 		return false;
 	}
 	if (setsockopt(socket1, SOL_SOCKET, SO_REUSEADDR, &i, sizeof(int)) == -1)
-	{
 		std::cout << ERROR_S << std::endl;
-	}
 	bzero((char *)&server_adress, sizeof(server_adress));
 	server_adress.sin_family = AF_INET;
 	server_adress.sin_addr.s_addr = htons(INADDR_ANY);

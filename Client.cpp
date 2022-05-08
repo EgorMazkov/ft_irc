@@ -46,3 +46,4 @@ void Client::minusFlagCheckPingPong(){this->flagCheckPingPong = 0;}
 int Client::getflagCheckPingPong(){return (this->flagCheckPingPong);}
 
 Client::~Client(){}
+

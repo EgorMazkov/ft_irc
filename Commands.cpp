@@ -267,6 +267,7 @@ void Server::pingServer(int _socket)
 void Server::pong(int _socket) {
     int i = 1;
     if (commandClient[i] == "ircserv"){
+        mapa[_socket]->nullCheckPing();
         mapa[_socket]->minusFlagCheckPingPong();
         writeCommandClient(idClient, _socket);
         deleteCommand(10);
