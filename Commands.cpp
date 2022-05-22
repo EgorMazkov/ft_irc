@@ -15,19 +15,11 @@ void Server::quit(int _socket) {
 
 void Server::deleteCommand(int q) {
     int i = 0;
-    if (commandClient[i] == "QUIT")
-    {
-        while (!commandClient[i].empty()){
-            commandClient[i] = "";
-            i++;
-        }
-        return ;
-    }
-    while (i != q - 1){
-        commandClient[i] = "";
+    while (commandClient[i] != "\n" && i != 1000){
+        commandClient[i].clear();
         i++;
     }
-    commandClient[i] = "";
+    commandClient[i].clear();
 }
 
 void Server::error(int error, int _socket, int iterator) {
@@ -109,7 +101,6 @@ void Server::privmsgClient(int _socket) {
 
 void Server::ison(int _socket) {
     std::string msg;
-    char *str;
     int i = 0;
     int q = 1;
     int checkClients = 0;
@@ -129,8 +120,7 @@ void Server::ison(int _socket) {
     }
     msg += "\n";
     writeCommandClient(q, _socket);
-    strcpy(str, msg.c_str());
-    send (_socket, str, strlen(str), 0);
+    send (_socket, msg.c_str(), msg.size(), 0);
     deleteCommand(100);
 }
 
@@ -151,9 +141,8 @@ int Server::user(int _socket, int iterator) {
         i++;
     }
     if (i < 5){
-        writeCommandClient(idClient + 1, _socket);
         error(461, _socket, 0);
-        deleteCommand(i + 1);
+        deleteCommand(iterator);
         return (0);
     }
     mapa[_socket]->setUserName(commandClient[++iterator]);
@@ -175,7 +164,7 @@ int Server::user(int _socket, int iterator) {
 }
 
 int Server::nick(int _socket, int iterator) {
-    if (checkNickClients(iterator, _socket)){
+    if (checkNickClients(iterator)){
         mapa[_socket]->setNickName(commandClient[++iterator]);
         writeCommandClient(idClient + 1, _socket);
         mapa[_socket]->setnickCheckPlus();
@@ -263,6 +252,7 @@ void Server::pingServer(int _socket)
         send(_socket, str, strlen(str), 0);
         mapa[_socket]->nullCheckPing();
     }
+    deleteCommand(100);
 }
 
 void Server::pong(int _socket) {

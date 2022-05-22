@@ -68,10 +68,9 @@ public:
         bool bilding();
         bool checkPassword(std::string pass);
 		void checkCommand(char *str, int _socket, int idClient);
-        void motdText(std::string nick);
-        char mot[BUFFER_SIZE];
+        void motdText(std::string nick, int _socket);
         int strq(char strq[BUFFER_SIZE]);
-		bool checkNickClients(int q, int _socket);
+		bool checkNickClients(int q);
 		
 		
 		int splitCommand(char *str);

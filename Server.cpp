@@ -133,8 +133,7 @@ void Server::checkTerminal(){
 					mapa[new_socket[idClient]]->setRegisted();
 					mapa[new_socket[idClient]]->setOfflineOnlinePlus();
 				}
-				motdText(mapa[new_socket[idClient]]->getNickName());
-				send(new_socket[idClient], mot, strlen(mot), 0);
+				motdText(mapa[new_socket[idClient]]->getNickName(), new_socket[idClient]);
 			}
 			else if (mapa[new_socket[idClient]]->getpassCheck() == 0 && mapa[new_socket[idClient]]->getnickCheck() == 1 && mapa[new_socket[idClient]]->getuserCheck() == 1)	{
 				close(new_socket[idClient]);
@@ -148,14 +147,15 @@ void Server::checkTerminal(){
 	}
 }
 
-void Server::motdText(std::string nick)
+void Server::motdText(std::string nick, int _socket)
 {
 	std::string Motd;
 
     Motd += ":IRC 375 " + nick + ":-" + SERVER_IP + " Message of the day - \n";
     Motd += ":IRC 372 " + nick + ":-" + buffer + "\n";
     Motd += ":IRC 376 " + nick + " :End of /MOTD command\n";
-    strcpy(mot, Motd.c_str());
+	send(new_socket[idClient], Motd.c_str(), Motd.size(), 0);
+	Motd.clear();
     return;
 }
 
@@ -167,35 +167,13 @@ int Server::strq(char strq[BUFFER_SIZE])
 	return (i);
 }
 
-//bool Server::checkNickClients(int q, int _socket) {
-//    int i = 0;
-//    while (new_socket[i] != -1){
-//		if (new_socket[i] == 0)
-//			return (true);
-//		if (mapa.empty()){
-//			if (commandClient[q + 1] == mapa[new_socket[i]]->getNickName() && _socket == mapa[new_socket[i]]->getSocket()){
-//				return (true);
-//			}
-//		}
-//        i++;
-//    }
-//    return (false);
-//}
-
-
-bool Server::checkNickClients(int q, int _socket) {
+bool Server::checkNickClients(int q) {
     int i = 0;
     while (new_socket[i] != -1){
-        if (new_socket[i] == 0)
-            return (true);
-        if (_socket == mapa[new_socket[i]]->getSocket()){
-            if (commandClient[q + 1] == mapa[new_socket[i]]->getNickName())
-                return (true);
-        }
-		if (commandClient[q + 1] == mapa[new_socket[i]]->getNickName()){
-            if (_socket != mapa[new_socket[i]]->getSocket())
-                return (false);
-        }
+		if (new_socket[i] == 0)
+			return (true);
+        if (commandClient[q + 1] == mapa[new_socket[i]]->getNickName())
+            return (false);
         i++;
     }
     return (true);

@@ -29,9 +29,12 @@ int Server::splitCommand(char *str) {
             i++;
             continue ;
         }
-        i++;
-        commandClient[i] = '\n';
-        i++;
+        if (commandClient[i] == "")
+            commandClient[i] = '\n';
+        else{
+            i++;
+            commandClient[i] = '\n';
+        }
         if (str[q] == '\n')
             break ;
         q++;
@@ -46,10 +49,7 @@ int Server::splitCommand(char *str) {
 void Server::writeCommandClient(int idClient, int _socket)
 {
     int i = 0;
-    if (mapa[_socket]->getnickCheck() == 1)
-        std::cout << "nick: " << mapa[_socket]->getNickName() << " ";
-    else
-        std::cout << "Client #" << idClient << " ";
+        std::cout << "Client" << " ";
     while (commandClient[i] == "")
         i++;
     std::cout << "<" << commandClient[i] << "> ";

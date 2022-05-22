@@ -145,7 +145,7 @@ void Server::kick(int _socket) {
         strcpy(str, msg.c_str());
         send(_socket, str, strlen(str), 0);
         send(_socketKick, str, strlen(str), 0);
-        deleteCommand(i);
+        deleteCommand(100);
         return;
     }
 }
