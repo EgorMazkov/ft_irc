@@ -26,6 +26,7 @@ void    Client::setOfflineOnlinePlus() {++this->offlineOnline;}
 int     Client::getOffineOnline() {return (this->offlineOnline);}
 void    Client::setOfflineOnlineMinus() {--this->offlineOnline;}
 int    Client::getId() {return (this->id);}
+int     Client::getSocket(){return (this->socket_fd);}
 void Client::setIP(std::string _ip) {this->ip = _ip;}
 std::string Client::getIP() {return this->ip;}
 int Client::getCheckPing() {return (this->checkPing);}

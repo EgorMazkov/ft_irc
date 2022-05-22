@@ -151,8 +151,9 @@ int Server::user(int _socket, int iterator) {
         i++;
     }
     if (i < 5){
+        writeCommandClient(idClient + 1, _socket);
         error(461, _socket, 0);
-        deleteCommand(iterator);
+        deleteCommand(i + 1);
         return (0);
     }
     mapa[_socket]->setUserName(commandClient[++iterator]);
@@ -174,7 +175,7 @@ int Server::user(int _socket, int iterator) {
 }
 
 int Server::nick(int _socket, int iterator) {
-    if (checkNickClients(iterator)){
+    if (checkNickClients(iterator, _socket)){
         mapa[_socket]->setNickName(commandClient[++iterator]);
         writeCommandClient(idClient + 1, _socket);
         mapa[_socket]->setnickCheckPlus();

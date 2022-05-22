@@ -71,7 +71,7 @@ public:
         void motdText(std::string nick);
         char mot[BUFFER_SIZE];
         int strq(char strq[BUFFER_SIZE]);
-		bool checkNickClients(int q);
+		bool checkNickClients(int q, int _socket);
 		
 		
 		int splitCommand(char *str);

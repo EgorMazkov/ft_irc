@@ -167,13 +167,35 @@ int Server::strq(char strq[BUFFER_SIZE])
 	return (i);
 }
 
-bool Server::checkNickClients(int q) {
+//bool Server::checkNickClients(int q, int _socket) {
+//    int i = 0;
+//    while (new_socket[i] != -1){
+//		if (new_socket[i] == 0)
+//			return (true);
+//		if (mapa.empty()){
+//			if (commandClient[q + 1] == mapa[new_socket[i]]->getNickName() && _socket == mapa[new_socket[i]]->getSocket()){
+//				return (true);
+//			}
+//		}
+//        i++;
+//    }
+//    return (false);
+//}
+
+
+bool Server::checkNickClients(int q, int _socket) {
     int i = 0;
     while (new_socket[i] != -1){
-		if (new_socket[i] == 0)
-			return (true);
-        if (commandClient[q + 1] == mapa[new_socket[i]]->getNickName())
-            return (false);
+        if (new_socket[i] == 0)
+            return (true);
+        if (_socket == mapa[new_socket[i]]->getSocket()){
+            if (commandClient[q + 1] == mapa[new_socket[i]]->getNickName())
+                return (true);
+        }
+		if (commandClient[q + 1] == mapa[new_socket[i]]->getNickName()){
+            if (_socket != mapa[new_socket[i]]->getSocket())
+                return (false);
+        }
         i++;
     }
     return (true);
