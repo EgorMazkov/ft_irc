@@ -69,4 +69,5 @@ public:
     void plusFlagCheckPingPong();
     void minusFlagCheckPingPong();
     int getflagCheckPingPong();
+	int getSocket();
 };

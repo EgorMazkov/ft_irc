@@ -166,15 +166,21 @@ int Server::strq(char strq[BUFFER_SIZE])
 		i++;
 	return (i);
 }
-
-bool Server::checkNickClients(int q) {
+/*
+ chann = chan.find(commandClient[i]);
+    if (chann != chan.end()){
+        while (commandClient[2] != mapa[new_socket[i]]->getNickName())
+		*/
+bool Server::checkNickClients(int q, int _socket) {
     int i = 0;
     while (new_socket[i] != -1){
 		if (new_socket[i] == 0)
 			return (true);
-        if (commandClient[q + 1] == mapa[new_socket[i]]->getNickName())
-            return (false);
-        i++;
-    }
-    return (true);
+		cl = mapa.find(_socket);
+		if (cl == mapa.end())
+			return (false);
+		else
+			return (true);
+	}
+	return (false);
 }

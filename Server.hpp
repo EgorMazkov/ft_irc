@@ -70,7 +70,7 @@ public:
 		void checkCommand(char *str, int _socket, int idClient);
         void motdText(std::string nick, int _socket);
         int strq(char strq[BUFFER_SIZE]);
-		bool checkNickClients(int q);
+		bool checkNickClients(int q, int _socket);
 		
 		
 		int splitCommand(char *str);

@@ -44,6 +44,6 @@ void Client::setMyChannel(std::string nameChannel) {
 void Client::plusFlagCheckPingPong(){this->flagCheckPingPong = 1;}
 void Client::minusFlagCheckPingPong(){this->flagCheckPingPong = 0;}
 int Client::getflagCheckPingPong(){return (this->flagCheckPingPong);}
-
+int Client::getSocket(){return (this->socket_fd);}
 Client::~Client(){}
 

@@ -164,7 +164,7 @@ int Server::user(int _socket, int iterator) {
 }
 
 int Server::nick(int _socket, int iterator) {
-    if (checkNickClients(iterator)){
+    if (checkNickClients(iterator, _socket)){
         mapa[_socket]->setNickName(commandClient[++iterator]);
         writeCommandClient(idClient + 1, _socket);
         mapa[_socket]->setnickCheckPlus();
