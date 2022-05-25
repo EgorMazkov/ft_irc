@@ -11,6 +11,16 @@ int Server::splitCommand(char *str) {
                 q++;
             if (str[q] == '\n' && !str[q + 1])
                 break ;
+            if (str[q] == 'D'){
+                    commandClient[i] += str[q];
+                    q++;
+                while (str[q]){
+                    commandClient[i] += str[q];
+                    q++;
+                }
+                i++;
+                return (i);
+            }
             if (str[q] == '\n' && str[q + 1])
             {
                 q++;
@@ -27,6 +37,7 @@ int Server::splitCommand(char *str) {
             while (str[q] == ' ')
                 q++;
             i++;
+            
             continue ;
         }
         if (commandClient[i] == "")
@@ -57,12 +68,12 @@ void Server::writeCommandClient(int idClient, int _socket)
     while (commandClient[i] != "\n"){
         while (commandClient[i] == ""){
             i++;
-            if (commandClient[i] == "\n"){
+            if (commandClient[i] == "\n" || commandClient[i] == ""){
                 std::cout << std::endl;
                 return;
             }
         }
-        if (commandClient[i] != "")
+        if (commandClient[i] != "" || i != 1023)
             std::cout << "<" << commandClient[i] << "> ";
         i++;
     }

@@ -8,8 +8,8 @@
 			"type": "lldb",
 			"request": "launch",
 			"name": "Debug",
-			"program": "/Users/ghumbert/Desktop/ft_irc/ircserv",
-			"args": ["1544", "1111"],
+			"program": "/Users/rdanica/Desktop/irc_serv/ircserv",
+			"args": ["1543", "1111"],
 			"cwd": "${workspaceFolder}"
 		}
 	]
