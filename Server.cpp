@@ -76,11 +76,12 @@ int Server::startServer(int ac, char **av)
 		if (new_socket[allClients] != -1)
 			allClients++;
 		FD_ZERO(&fd_read);
+		FD_ZERO(&fd_write);
 		FD_SET(socket1, &fd_read);
 		FD_SET(socket2, &fd_write);
 		if (max_fd < socket1)
 			max_fd = socket1;
-		if (select(max_fd + 1, &fd_read, &fd_write, NULL, &tv) > 0) {
+		if (select(max_fd + 1, &fd_read, &fd_write, NULL, NULL) > 0) {
 			std::pair<int, std::string> pair = connect();
 			new_socket[allClients] = pair.first;
 			if (new_socket[allClients] != -1) {
@@ -88,11 +89,13 @@ int Server::startServer(int ac, char **av)
 				cl = mapa.find(new_socket[i]);
 				if (cl == mapa.end())
 					mapa.insert(std::make_pair(new_socket[allClients], new Client(new_socket[allClients])));
-				mapa[new_socket[idClient]]->setIP(pair.second);
+				mapa[new_socket[allClients]]->setIP(pair.second);
 			}
 		}
 		if (!mapa.empty())
+		{
 			checkTerminal();
+		}
 	}
 	return (1);
 }
@@ -112,9 +115,11 @@ std::pair<int, std::string> Server::connect(){
 void Server::checkTerminal(){
 	int res;
 	idClient = 0;
+	int socket;
 	while (new_socket[idClient] > 0){
-		if (select(max_fd + 1, &fd_read, &fd_write, NULL, &tv) > 0)	{
-			res = recv(new_socket[idClient], str, BUFFER_SIZE, 0);
+		socket = new_socket[idClient];
+		if (true)	{
+			res = recv(socket, str, BUFFER_SIZE, 0);
 			if (res > 0){
 				if (str[res - 1] == '\n')
 					checkCommand(str, new_socket[idClient], idClient);
@@ -138,7 +143,12 @@ void Server::checkTerminal(){
 			else if (mapa[new_socket[idClient]]->getpassCheck() == 0 && mapa[new_socket[idClient]]->getnickCheck() == 1 && mapa[new_socket[idClient]]->getuserCheck() == 1)	{
 				close(new_socket[idClient]);
 				allClients--;
+				std::cout<< mapa[new_socket[idClient]]->getNickName() << " has disconnected" << std::endl;
 				mapa.erase(new_socket[idClient]);
+				new_socket[idClient] = -1;
+				
+				idClient++;
+				continue;
 			}
             if (mapa[new_socket[idClient]]->getCheckPing() == 10000000 && mapa[new_socket[idClient]]->getOffineOnline() == 1)
                 pingServer(new_socket[idClient]);

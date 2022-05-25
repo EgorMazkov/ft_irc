@@ -15,7 +15,7 @@ void Server::quit(int _socket) {
 
 void Server::deleteCommand(int q) {
     int i = 0;
-    while (commandClient[i] != "\n" && i != 1000){
+    while (commandClient[i] != "\n" && i != 1024){
         commandClient[i].clear();
         i++;
     }
@@ -64,8 +64,12 @@ void Server::error(int error, int _socket, int iterator) {
     if (error == 409)
         msg += "409 " + mapa[_socket]->getNickName() + " :No origin specified";
     msg += '\n';
-    strcpy(str, msg.c_str());
-    send(_socket, str, strlen(str), 0);
+    send(_socket, msg.c_str(), strlen(msg.c_str()), 0);//КОСЯК появляется мусор но тепере буфер не перегрузить
+    //strcpy(str, msg.c_str());
+    if (send(_socket, str, strlen(str), 0) != strlen(str))
+    {
+        perror("send");
+    }
     return ;
 }
 
@@ -126,9 +130,10 @@ void Server::ison(int _socket) {
 
 int Server::pass(int _socket, int iterator) {
     if (checkPassword(commandClient[++iterator])){
-        writeCommandClient(idClient + 1, _socket);
+        // writeCommandClient(idClient + 1, _socket);
         mapa[_socket]->setpassCheckPlus();
     }
+    writeCommandClient(idClient, _socket);
     iterator += 2;
     deleteCommand(iterator);
     return (iterator);

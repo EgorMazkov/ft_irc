@@ -50,7 +50,7 @@ public:
 		Server			*serv;
 		struct sockaddr_in	server_adress;
 		char			buffer[BUFFER_SIZE]; // отсюда берет текст для клиента
-		char			str[0]; // сюда записываются от клиента информация
+		char			str[BUFFER_SIZE + 1]; // сюда записываются от клиента информация
 		char			*recv_str;
 		fd_set			fd_read, fd_write;
 		struct timeval tv;
