@@ -52,6 +52,11 @@ void Server::writeCommandClient(int idClient, int _socket)
         std::cout << "Client" << " ";
     while (commandClient[i] == "")
         i++;
+    if (commandClient[i] == "\n" && i == 0)
+    {
+        std::cout << "<empty line>" << std::endl;
+        return;
+    }
     std::cout << "<" << commandClient[i] << "> ";
     i++;
     while (commandClient[i] != "\n"){
