@@ -79,20 +79,39 @@ void Server::privmsgClient(int _socket) {
             if (mapa[new_socket[i]]->getOffineOnline() == 1){
                 msg += ":" + mapa[_socket]->getNickName() + "!" + mapa[_socket]->getUserName() + "@" + mapa[_socket]->getIP() + " ";
                 q = 0;
+                // if (flagfile){
+                //     while (commandClient[q] != "\n")
+                //     {
+                //         msg += commandClient[q] + " ";
+                //         q++;
+                //         if (q == 2)
+                //             msg += ":";
+                //     }
+                //     // msg += "\r\n";
+                // }
+                // else
+                // {
+                    // while(!commandClient[q].empty())
+                    // {
+                    //     msg += commandClient[q] + " ";
+                    //     q++;
+                    //     if (q == 2)
+                    //         msg += ":";
+                    // }
+                // }
+
                 while (!commandClient[q].empty()){
                     msg += commandClient[q] + " ";
                     q++;
                     if (q == 2)
-                        msg += ": ";
+                        msg += ":";
                 }
-                strcpy(msg1, msg.c_str());
-                send(new_socket[i], msg1, strlen(msg1), 1);
+                // if (flagfile) 
+                //     msg += "\r\n";
+                send(new_socket[i], msg.c_str(), msg.size(), 1);
                 writeCommandClient(q, _socket);
                 deleteCommand(q);
                 return ;
-            }
-            else {
-            
             }
         }
         i++;

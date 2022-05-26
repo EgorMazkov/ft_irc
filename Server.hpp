@@ -36,6 +36,7 @@ class Server
 		socklen_t client_length;
         int allClients;
         int numberChannelPasswordChannel;
+		bool flagfile;
 public:
 		int flag;
 		std::map<int, Client*> mapa;

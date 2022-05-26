@@ -28,6 +28,7 @@ void Server::initial(char **av)
 	allClients = -1;
 	strcpy(buffer, "Hello peer");
 	flag = 0;
+	flagfile = false;
 	numberChannelPasswordChannel = 0;
 }
 
