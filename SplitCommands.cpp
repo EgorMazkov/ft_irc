@@ -65,8 +65,8 @@ void Server::writeCommandClient(int idClient, int _socket)
         std::cout << "Client" << " ";
     while (commandClient[i] == "")
         i++;
-    std::cout << "<" << commandClient[i] << "> ";
-    i++;
+    //std::cout << "<" << commandClient[i] << "> ";
+    // i++;
     // while (commandClient[i] != "\n"){
     //     while (commandClient[i] == ""){
     //         i++;
@@ -82,6 +82,9 @@ void Server::writeCommandClient(int idClient, int _socket)
     // std::cout << std::endl;
     while(commandClient[i] != "\n")
     {
+        if (commandClient[i][0] == '\n' || i > 1023)
+            break;
+        commandClient[i].erase(commandClient[i].find_last_not_of(" \n\r")+1);
         std::cout << "<" << commandClient[i] << "> ";
         i++;
     }

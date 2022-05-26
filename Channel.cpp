@@ -98,13 +98,12 @@ void Server::privmsgChannel(int i, int _socket) {
                 msg += ": ";
         }
         i = 0;
-        strcpy(str, msg.c_str());
         while (i != chan[commandClient[1]]->getNumClient()){
             if (chan[commandClient[1]]->socketClientForChannel(i) == _socket){
                 i++;
                 continue ;
             }
-            send(chan[commandClient[1]]->socketClientForChannel(i), str, strlen(str), 0);
+            send(chan[commandClient[1]]->socketClientForChannel(i), msg.c_str(), msg.size(), 0);
             i++;
         }
     }

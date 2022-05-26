@@ -219,7 +219,7 @@ void Server::allowedCharacterJoin(int _socket) {
 
 void Server::allowedCharacterPrivmsg(int _socket) {
     int i = 0;
-    while (str[i] != '#' || str[i] != '&' || str[i] != '+' || str[i] != '!') {
+    while (str[i] != '#' && str[i] != '&' && str[i] != '+' && str[i] != '!') {
         if (str[i] == '\n'){
             privmsgClient(_socket);
             deleteCommand(i);
@@ -284,3 +284,6 @@ void Server::pong(int _socket) {
         return ;
     }
 }
+
+
+
