@@ -172,11 +172,7 @@ int Server::strq(char strq[BUFFER_SIZE])
 		i++;
 	return (i);
 }
-/*
- chann = chan.find(commandClient[i]);
-    if (chann != chan.end()){
-        while (commandClient[2] != mapa[new_socket[i]]->getNickName())
-		*/
+
 bool Server::checkNickClients(int q, int _socket) {
     int i = 0;
     while (new_socket[i] != -1){

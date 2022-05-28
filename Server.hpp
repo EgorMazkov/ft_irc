@@ -74,10 +74,10 @@ public:
 		bool checkNickClients(int q, int _socket);
 		
 		
-		int splitCommand(char *str);
+		void splitCommand(char *str);
         std::string commandClient[BUFFER_SIZE];
-        void writeCommandClient(int idClient, int _socket);
-        void deleteCommand(int q);
+        void writeCommandClient();
+        void deleteCommand();
 		
 		
 		
@@ -97,5 +97,15 @@ public:
         void ping(int _socket);
         void pingServer(int _socket);
         void pong(int _socket);
+
+
+
+
+
+
+
+
+
+		void siginthandler(int param);
         
 };

@@ -41,7 +41,6 @@ Channel::~Channel(){}
 
 void Server::join(int _socket) {
     std::string msg;
-    char str[BUFFER_SIZE];
     int i = 1;
     chann = chan.find(commandClient[i]);
     if (chann != chan.end()){
@@ -55,8 +54,7 @@ void Server::join(int _socket) {
                if (i == 2)
                    msg += ": ";
            }
-           strcpy(str, msg.c_str());
-           send(chan[commandClient[1]]->getAdminChannel(), str, strlen(str), 0);
+           send(chan[commandClient[1]]->getAdminChannel(), msg.c_str(), msg.size(), 0);
            error(331, _socket, 0);
            error(353, _socket, 0);
            error(366, _socket, 0);
@@ -141,10 +139,9 @@ void Server::kick(int _socket) {
             msg += commandClient[i];
             i++;
         }
-        strcpy(str, msg.c_str());
-        send(_socket, str, strlen(str), 0);
-        send(_socketKick, str, strlen(str), 0);
-        deleteCommand(100);
+        send(_socket, msg.c_str(), msg.size(), 0);
+        send(_socketKick, msg.c_str(), msg.size(), 0);
+        deleteCommand();
         return;
     }
 }

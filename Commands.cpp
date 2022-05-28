@@ -2,7 +2,7 @@
 #include "Client.hpp"
 
 void Server::quit(int _socket) {
-    deleteCommand(2);
+    deleteCommand();
     close(_socket);
     mapa[_socket]->setnickCheckMinus();
     mapa[_socket]->setpassCheckMinus();
@@ -13,7 +13,7 @@ void Server::quit(int _socket) {
 }
 
 
-void Server::deleteCommand(int q) {
+void Server::deleteCommand() {
     int i = 0;
     while (commandClient[i] != "\n" && i != 1000){
         commandClient[i].clear();
@@ -64,8 +64,7 @@ void Server::error(int error, int _socket, int iterator) {
     if (error == 409)
         msg += "409 " + mapa[_socket]->getNickName() + " :No origin specified";
     msg += '\n';
-    strcpy(str, msg.c_str());
-    send(_socket, str, strlen(str), 0);
+    send(_socket, msg.c_str(), msg.size(), 0);
     return ;
 }
 
@@ -86,8 +85,8 @@ void Server::privmsgClient(int _socket) {
                         msg += ":";
                 }
                 send(new_socket[i], msg.c_str(), msg.size(), 1);
-                writeCommandClient(q, _socket);
-                deleteCommand(q);
+                writeCommandClient();
+                deleteCommand();
                 return ;
             }
         }
@@ -115,18 +114,18 @@ void Server::ison(int _socket) {
         }
     }
     msg += "\n";
-    writeCommandClient(q, _socket);
+    writeCommandClient();
     send (_socket, msg.c_str(), msg.size(), 0);
-    deleteCommand(100);
+    deleteCommand();
 }
 
 int Server::pass(int _socket, int iterator) {
     if (checkPassword(commandClient[++iterator])){
         mapa[_socket]->setpassCheckPlus();
     }
-    writeCommandClient(idClient + 1, _socket);
+    writeCommandClient();
     iterator += 2;
-    deleteCommand(iterator);
+    deleteCommand();
     return (iterator);
 }
 
@@ -138,7 +137,7 @@ int Server::user(int _socket, int iterator) {
     }
     if (i < 5){
         error(461, _socket, 0);
-        deleteCommand(iterator);
+        deleteCommand();
         return (0);
     }
     mapa[_socket]->setUserName(commandClient[++iterator]);
@@ -153,23 +152,23 @@ int Server::user(int _socket, int iterator) {
         iterator++;
     else
         iterator += 2;
-    writeCommandClient(idClient + 1, _socket);
+    writeCommandClient();
     mapa[_socket]->setuserCheckPlus();
-    deleteCommand(iterator);
+    deleteCommand();
     return (iterator);
 }
 
 int Server::nick(int _socket, int iterator) {
     if (checkNickClients(iterator, _socket)){
         mapa[_socket]->setNickName(commandClient[++iterator]);
-        writeCommandClient(idClient + 1, _socket);
+        writeCommandClient();
         mapa[_socket]->setnickCheckPlus();
         iterator += 2;
-        deleteCommand(iterator);
+        deleteCommand();
         return (iterator);
     }
     error(433, _socket, iterator + 1);
-    deleteCommand(10);
+    deleteCommand();
     return (iterator);
 }
 
@@ -181,7 +180,7 @@ void Server::allowedCharacterJoin(int _socket) {
 		else{
 			 if (str[i - 1] == ' '){
             join(_socket);
-            writeCommandClient(idClient + 1, _socket);
+            writeCommandClient();
 			break ;
         	}
         	else
@@ -190,7 +189,7 @@ void Server::allowedCharacterJoin(int _socket) {
 	}
 	if (str[i] == '\n')
 		error(403, _socket, 0);
-    deleteCommand(i);
+    deleteCommand();
     return;
 }
 
@@ -199,7 +198,7 @@ void Server::allowedCharacterPrivmsg(int _socket) {
     while (str[i] != '#' && str[i] != '&' && str[i] != '+' && str[i] != '!') {
         if (str[i] == '\n'){
             privmsgClient(_socket);
-            deleteCommand(i);
+            deleteCommand();
             return;
         }
         i++;
@@ -210,7 +209,7 @@ void Server::allowedCharacterPrivmsg(int _socket) {
         else
             error(403, _socket, 0);
     }
-    deleteCommand(i);
+    deleteCommand();
     return;
 }
 
@@ -221,10 +220,9 @@ void Server::ping(int _socket) {
     if (commandClient[i] == "")
         error(409, _socket, 0);
     msg = ":IRC PONG " + commandClient[i] + '\n';
-    strcpy(str, msg.c_str());
-    send(_socket, str, strlen(str), 0);
-    writeCommandClient(idClient + 1, _socket);
-    deleteCommand(10);
+    send(_socket, msg.c_str(), msg.size(), 0);
+    writeCommandClient();
+    deleteCommand();
 }
 
 void Server::pingServer(int _socket)
@@ -244,11 +242,10 @@ void Server::pingServer(int _socket)
     else{
         mapa[_socket]->plusFlagCheckPingPong();
         msg += "PING ircserv\n";
-        strcpy(str, msg.c_str());
-        send(_socket, str, strlen(str), 0);
+        send(_socket, msg.c_str(), msg.size(), 0);
         mapa[_socket]->nullCheckPing();
     }
-    deleteCommand(100);
+    deleteCommand();
 }
 
 void Server::pong(int _socket) {
@@ -256,8 +253,8 @@ void Server::pong(int _socket) {
     if (commandClient[i] == "ircserv"){
         mapa[_socket]->nullCheckPing();
         mapa[_socket]->minusFlagCheckPingPong();
-        writeCommandClient(idClient, _socket);
-        deleteCommand(10);
+        writeCommandClient();
+        deleteCommand();
         return ;
     }
 }

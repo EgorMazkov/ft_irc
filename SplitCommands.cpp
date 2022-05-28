@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-int Server::splitCommand(char *str) {
+void Server::splitCommand(char *str) {
     int i = 0;
     int q = 0;
     while (str[q] != '\n')
@@ -21,7 +21,7 @@ int Server::splitCommand(char *str) {
                 flagfile = true;
                 i++;
                 commandClient[i] = '\n';
-                return (i);
+                return ;
             }
             if (str[q] == '\n' && str[q + 1])
             {
@@ -62,11 +62,9 @@ int Server::splitCommand(char *str) {
         str[q] = 0;
         q++;
     }
-    
-    return (i);
 }
 
-void Server::writeCommandClient(int idClient, int _socket)
+void Server::writeCommandClient()
 {
     int i = 0;
         std::cout << "Client" << " ";
@@ -87,8 +85,8 @@ void Server::checkCommand(char *str, int _socket, int idClient) {
     int i;
     
     mapa[_socket]->nullCheckPing();
-    deleteCommand(1);
-    i = splitCommand(str);
+    deleteCommand();
+    splitCommand(str);
     i = 0;
     if (commandClient[i] == "ISON"){ison(_socket); return;}
     while (mapa[_socket]->getOffineOnline() != 1){
@@ -97,8 +95,8 @@ void Server::checkCommand(char *str, int _socket, int idClient) {
         if (commandClient[i] == "NICK"){i = nick(_socket, i);}
         if (!commandClient[i].empty()){
             error(421, _socket, 0);
-            writeCommandClient(idClient + 1, _socket);
-            deleteCommand(100);
+            writeCommandClient();
+            deleteCommand();
         }
         return;
     }
@@ -109,8 +107,8 @@ void Server::checkCommand(char *str, int _socket, int idClient) {
     if (commandClient[i] == "PING"){ping(_socket); return;}
     if (commandClient[i] == "PONG"){pong(_socket); return;}
     error(421, _socket, 0);
-    writeCommandClient(idClient + 1, _socket);
-    deleteCommand(100);
+    writeCommandClient();
+    deleteCommand();
     return;
 }
 
