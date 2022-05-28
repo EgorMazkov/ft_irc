@@ -89,7 +89,7 @@ int Server::startServer(int ac, char **av)
 				cl = mapa.find(new_socket[i]);
 				if (cl == mapa.end())
 					mapa.insert(std::make_pair(new_socket[allClients], new Client(new_socket[allClients])));
-				mapa[new_socket[idClient]]->setIP(pair.second);
+				mapa[new_socket[allClients]]->setIP(pair.second);
 			}
 		}
 		if (!mapa.empty())
@@ -139,7 +139,12 @@ void Server::checkTerminal(){
 			else if (mapa[new_socket[idClient]]->getpassCheck() == 0 && mapa[new_socket[idClient]]->getnickCheck() == 1 && mapa[new_socket[idClient]]->getuserCheck() == 1)	{
 				close(new_socket[idClient]);
 				allClients--;
+				std::cout<< mapa[new_socket[idClient]]->getNickName() << " has disconnected" << std::endl;
 				mapa.erase(new_socket[idClient]);
+				new_socket[idClient] = -1;
+				
+				idClient++;
+				continue;
 			}
             if (mapa[new_socket[idClient]]->getCheckPing() == 10000000 && mapa[new_socket[idClient]]->getOffineOnline() == 1)
                 pingServer(new_socket[idClient]);

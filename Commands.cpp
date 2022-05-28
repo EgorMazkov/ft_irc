@@ -79,35 +79,12 @@ void Server::privmsgClient(int _socket) {
             if (mapa[new_socket[i]]->getOffineOnline() == 1){
                 msg += ":" + mapa[_socket]->getNickName() + "!" + mapa[_socket]->getUserName() + "@" + mapa[_socket]->getIP() + " ";
                 q = 0;
-                // if (flagfile){
-                //     while (commandClient[q] != "\n")
-                //     {
-                //         msg += commandClient[q] + " ";
-                //         q++;
-                //         if (q == 2)
-                //             msg += ":";
-                //     }
-                //     // msg += "\r\n";
-                // }
-                // else
-                // {
-                    // while(!commandClient[q].empty())
-                    // {
-                    //     msg += commandClient[q] + " ";
-                    //     q++;
-                    //     if (q == 2)
-                    //         msg += ":";
-                    // }
-                // }
-
                 while (!commandClient[q].empty()){
                     msg += commandClient[q] + " ";
                     q++;
                     if (q == 2)
                         msg += ":";
                 }
-                // if (flagfile) 
-                //     msg += "\r\n";
                 send(new_socket[i], msg.c_str(), msg.size(), 1);
                 writeCommandClient(q, _socket);
                 deleteCommand(q);
@@ -145,9 +122,9 @@ void Server::ison(int _socket) {
 
 int Server::pass(int _socket, int iterator) {
     if (checkPassword(commandClient[++iterator])){
-        writeCommandClient(idClient + 1, _socket);
         mapa[_socket]->setpassCheckPlus();
     }
+    writeCommandClient(idClient + 1, _socket);
     iterator += 2;
     deleteCommand(iterator);
     return (iterator);
