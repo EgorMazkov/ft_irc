@@ -4,10 +4,7 @@
 
 Channel::Channel() : numClient(0) {}
 
-void Channel::setChannel(std::string nameChannel)
-{
-	this->Channels = nameChannel;
-}
+void Channel::setChannel(std::string nameChannel){	this->Channels = nameChannel;}
 
 void Channel::setClients(int _socketClient)
 {
@@ -19,29 +16,17 @@ int Channel::socketClientForChannel(int i) { return (this->clients[i]); }
 
 int Channel::getNumClient() { return (this->numClient); }
 
-void Channel::setPassword(std::string passwordChannel)
-{
-	this->Password = passwordChannel;
-}
+void Channel::setPassword(std::string passwordChannel){	this->Password = passwordChannel;}
 
 std::string Channel::getPassword() { return (this->Password); }
 
-void Channel::setKickClient(int i)
-{
-	this->clients[i] = -1;
-}
+void Channel::setKickClient(int i){	this->clients[i] = -1;}
 
-void Channel::setAdminChannel(int _socketAdmin)
-{
-	this->adminChannel = _socketAdmin;
-}
+void Channel::setAdminChannel(int _socketAdmin){this->adminChannel = _socketAdmin;}
 
 int Channel::getAdminChannel() { return (this->adminChannel); }
 
-std::string Channel::getChannel()
-{
-	return (this->Channels);
-}
+std::string Channel::getChannel(){	return (this->Channels);}
 
 Channel::~Channel() {}
 
