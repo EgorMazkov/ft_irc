@@ -108,9 +108,7 @@ void Server::privmsgChannel(int i, int _socket)
 		}
 	}
 	else
-	{
 		error(401, _socket, 0);
-	}
 }
 
 void Server::kick(int _socket)
