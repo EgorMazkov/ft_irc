@@ -16,7 +16,7 @@ void Server::quit(int _socket)
 void Server::deleteCommand()
 {
 	int i = 0;
-	while (commandClient[i] != "\n" && i != 1000)
+	while (commandClient[i] != "\n" && i != 1024)
 	{
 		commandClient[i].clear();
 		i++;
@@ -139,9 +139,7 @@ void Server::ison(int _socket)
 int Server::pass(int _socket, int iterator)
 {
 	if (checkPassword(commandClient[++iterator]))
-	{
 		mapa[_socket]->setpassCheckPlus();
-	}
 	writeCommandClient();
 	iterator += 2;
 	deleteCommand();

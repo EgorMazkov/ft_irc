@@ -20,9 +20,7 @@ void Server::initial(char **av)
 	numberClient = 0;
 	FD_ZERO(&fd_read);
 	FD_ZERO(&fd_write);
-	tv.tv_sec = 0;
 	idClient = 0;
-	tv.tv_usec = 0;
 	str[0] = 0;
 	i = -1;
 	allClients = -1;
@@ -81,7 +79,7 @@ int Server::startServer(int ac, char **av)
 		FD_SET(socket2, &fd_write);
 		if (max_fd < socket1)
 			max_fd = socket1;
-		if (select(max_fd + 1, &fd_read, &fd_write, NULL, &tv) > 0)
+		if (select(max_fd + 1, &fd_read, &fd_write, NULL, NULL) > 0)
 		{
 			std::pair<int, std::string> pair = connect();
 			new_socket[allClients] = pair.first;
@@ -119,44 +117,40 @@ void Server::checkTerminal()
 	idClient = 0;
 	while (new_socket[idClient] > 0)
 	{
-		if (select(max_fd + 1, &fd_read, &fd_write, NULL, &tv) > 0)
+		res = recv(new_socket[idClient], str, BUFFER_SIZE, 0);
+		if (res > 0)
 		{
-			res = recv(new_socket[idClient], str, BUFFER_SIZE, 0);
-			if (res > 0)
-			{
-				if (str[res - 1] == '\n')
-					checkCommand(str, new_socket[idClient], idClient);
-			}
-			if (res == -1)
-			{
-				mapa[new_socket[idClient]]->setCheckPing();
-			}
-			if (mapa[new_socket[idClient]]->getnickCheck() == 1 && mapa[new_socket[idClient]]->getpassCheck() == 1 && mapa[new_socket[idClient]]->getuserCheck() == 1 && mapa[new_socket[idClient]]->getOffineOnline() == 0)
-			{
-				if (mapa[new_socket[idClient]]->getOffineOnline() == 0 && mapa[new_socket[idClient]]->getRegisted() != 0)
-					mapa[new_socket[idClient]]->setOfflineOnlinePlus();
-				else
-				{
-					mapa[new_socket[idClient]]->setRegisted();
-					mapa[new_socket[idClient]]->setOfflineOnlinePlus();
-				}
-				motdText(mapa[new_socket[idClient]]->getNickName(), new_socket[idClient]);
-			}
-			else if (mapa[new_socket[idClient]]->getpassCheck() == 0 && mapa[new_socket[idClient]]->getnickCheck() == 1 && mapa[new_socket[idClient]]->getuserCheck() == 1)
-			{
-				close(new_socket[idClient]);
-				allClients--;
-				std::cout << mapa[new_socket[idClient]]->getNickName() << " has disconnected" << std::endl;
-				mapa.erase(new_socket[idClient]);
-				new_socket[idClient] = -1;
-
-				idClient++;
-				continue;
-			}
-			if (mapa[new_socket[idClient]]->getCheckPing() == 10000000 && mapa[new_socket[idClient]]->getOffineOnline() == 1)
-				pingServer(new_socket[idClient]);
-			idClient++;
+			if (str[res - 1] == '\n')
+				checkCommand(str, new_socket[idClient], idClient);
 		}
+		if (res == -1)
+		{
+			mapa[new_socket[idClient]]->setCheckPing();
+		}
+		if (mapa[new_socket[idClient]]->getnickCheck() == 1 && mapa[new_socket[idClient]]->getpassCheck() == 1 && mapa[new_socket[idClient]]->getuserCheck() == 1 && mapa[new_socket[idClient]]->getOffineOnline() == 0)
+		{
+			if (mapa[new_socket[idClient]]->getOffineOnline() == 0 && mapa[new_socket[idClient]]->getRegisted() != 0)
+				mapa[new_socket[idClient]]->setOfflineOnlinePlus();
+			else
+			{
+				mapa[new_socket[idClient]]->setRegisted();
+				mapa[new_socket[idClient]]->setOfflineOnlinePlus();
+			}
+			motdText(mapa[new_socket[idClient]]->getNickName(), new_socket[idClient]);
+		}
+		else if (mapa[new_socket[idClient]]->getpassCheck() == 0 && mapa[new_socket[idClient]]->getnickCheck() == 1 && mapa[new_socket[idClient]]->getuserCheck() == 1)
+		{
+			close(new_socket[idClient]);
+			allClients--;
+			std::cout << mapa[new_socket[idClient]]->getNickName() << " has disconnected" << std::endl;
+			mapa.erase(new_socket[idClient]);
+			new_socket[idClient] = -1;
+			idClient++;
+			continue;
+		}
+		if (mapa[new_socket[idClient]]->getCheckPing() == 10000000 && mapa[new_socket[idClient]]->getOffineOnline() == 1)
+			pingServer(new_socket[idClient]);
+		idClient++;
 	}
 }
 

@@ -75,6 +75,11 @@ void Server::writeCommandClient()
 			  << " ";
 	while (commandClient[i] == "")
 		i++;
+	if (commandClient[i] == "\n" && i == 0)
+	{
+		std::cout << "<empty line>" << std::endl;
+		return;
+	}
 	while (commandClient[i] != "\n")
 	{
 		if (commandClient[i][0] == '\n' || i > 1023)
@@ -121,12 +126,36 @@ void Server::checkCommand(char *str, int _socket, int idClient)
 		}
 		return;
 	}
-	if (commandClient[i] == "QUIT")	{quit(_socket); return;}
-	if (commandClient[i] == "JOIN")	{allowedCharacterJoin(_socket); return;}
-	if (commandClient[i] == "PRIVMSG")	{allowedCharacterPrivmsg(_socket); return;}
-	if (commandClient[i] == "KICK")	{kick(_socket); return;}
-	if (commandClient[i] == "PING")	{ping(_socket);	return;}
-	if (commandClient[i] == "PONG")	{pong(_socket);	return;}
+	if (commandClient[i] == "QUIT")
+	{
+		quit(_socket);
+		return;
+	}
+	if (commandClient[i] == "JOIN")
+	{
+		allowedCharacterJoin(_socket);
+		return;
+	}
+	if (commandClient[i] == "PRIVMSG")
+	{
+		allowedCharacterPrivmsg(_socket);
+		return;
+	}
+	if (commandClient[i] == "KICK")
+	{
+		kick(_socket);
+		return;
+	}
+	if (commandClient[i] == "PING")
+	{
+		ping(_socket);
+		return;
+	}
+	if (commandClient[i] == "PONG")
+	{
+		pong(_socket);
+		return;
+	}
 	error(421, _socket, 0);
 	writeCommandClient();
 	deleteCommand();
