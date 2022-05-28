@@ -27,7 +27,6 @@ void Server::initial(char **av)
 	i = -1;
 	allClients = -1;
 	strcpy(buffer, "Hello peer");
-	flag = 0;
 	flagfile = false;
 	numberChannelPasswordChannel = 0;
 }
@@ -69,7 +68,8 @@ int Server::startServer(int ac, char **av)
 	listen(socket1, 1);
 	while (true)
 	{
-		if (allClients == 99) {
+		if (allClients == 99)
+		{
 			std::cout << "Error: maximum number of clients connected" << std::endl;
 			while (allClients == 99)
 				checkTerminal();
@@ -81,10 +81,12 @@ int Server::startServer(int ac, char **av)
 		FD_SET(socket2, &fd_write);
 		if (max_fd < socket1)
 			max_fd = socket1;
-		if (select(max_fd + 1, &fd_read, &fd_write, NULL, &tv) > 0) {
+		if (select(max_fd + 1, &fd_read, &fd_write, NULL, &tv) > 0)
+		{
 			std::pair<int, std::string> pair = connect();
 			new_socket[allClients] = pair.first;
-			if (new_socket[allClients] != -1) {
+			if (new_socket[allClients] != -1)
+			{
 				fcntl(new_socket[allClients], F_SETFL, O_NONBLOCK);
 				cl = mapa.find(new_socket[i]);
 				if (cl == mapa.end())
@@ -98,7 +100,8 @@ int Server::startServer(int ac, char **av)
 	return (1);
 }
 
-std::pair<int, std::string> Server::connect(){
+std::pair<int, std::string> Server::connect()
+{
 	struct sockaddr_in ClientAddr;
 	std::string qwe = "lsdkjflsdkfjsdf";
 	client_length = sizeof(ClientAddr);
@@ -110,44 +113,48 @@ std::pair<int, std::string> Server::connect(){
 	return std::make_pair(new_socket[i], inet_ntoa(ClientAddr.sin_addr));
 }
 
-void Server::checkTerminal(){
+void Server::checkTerminal()
+{
 	int res;
 	idClient = 0;
-	while (new_socket[idClient] > 0){
-		if (select(max_fd + 1, &fd_read, &fd_write, NULL, &tv) > 0)	{
+	while (new_socket[idClient] > 0)
+	{
+		if (select(max_fd + 1, &fd_read, &fd_write, NULL, &tv) > 0)
+		{
 			res = recv(new_socket[idClient], str, BUFFER_SIZE, 0);
-			if (res > 0){
+			if (res > 0)
+			{
 				if (str[res - 1] == '\n')
 					checkCommand(str, new_socket[idClient], idClient);
 			}
-            if (res == -1){
-                mapa[new_socket[idClient]]->setCheckPing();
-            }
-			if (mapa[new_socket[idClient]]->getnickCheck() == 1 
-			&& mapa[new_socket[idClient]]->getpassCheck() == 1 
-			&& mapa[new_socket[idClient]]->getuserCheck() == 1 
-			&& mapa[new_socket[idClient]]->getOffineOnline() == 0)
+			if (res == -1)
+			{
+				mapa[new_socket[idClient]]->setCheckPing();
+			}
+			if (mapa[new_socket[idClient]]->getnickCheck() == 1 && mapa[new_socket[idClient]]->getpassCheck() == 1 && mapa[new_socket[idClient]]->getuserCheck() == 1 && mapa[new_socket[idClient]]->getOffineOnline() == 0)
 			{
 				if (mapa[new_socket[idClient]]->getOffineOnline() == 0 && mapa[new_socket[idClient]]->getRegisted() != 0)
 					mapa[new_socket[idClient]]->setOfflineOnlinePlus();
-				else {
+				else
+				{
 					mapa[new_socket[idClient]]->setRegisted();
 					mapa[new_socket[idClient]]->setOfflineOnlinePlus();
 				}
 				motdText(mapa[new_socket[idClient]]->getNickName(), new_socket[idClient]);
 			}
-			else if (mapa[new_socket[idClient]]->getpassCheck() == 0 && mapa[new_socket[idClient]]->getnickCheck() == 1 && mapa[new_socket[idClient]]->getuserCheck() == 1)	{
+			else if (mapa[new_socket[idClient]]->getpassCheck() == 0 && mapa[new_socket[idClient]]->getnickCheck() == 1 && mapa[new_socket[idClient]]->getuserCheck() == 1)
+			{
 				close(new_socket[idClient]);
 				allClients--;
-				std::cout<< mapa[new_socket[idClient]]->getNickName() << " has disconnected" << std::endl;
+				std::cout << mapa[new_socket[idClient]]->getNickName() << " has disconnected" << std::endl;
 				mapa.erase(new_socket[idClient]);
 				new_socket[idClient] = -1;
-				
+
 				idClient++;
 				continue;
 			}
-            if (mapa[new_socket[idClient]]->getCheckPing() == 10000000 && mapa[new_socket[idClient]]->getOffineOnline() == 1)
-                pingServer(new_socket[idClient]);
+			if (mapa[new_socket[idClient]]->getCheckPing() == 10000000 && mapa[new_socket[idClient]]->getOffineOnline() == 1)
+				pingServer(new_socket[idClient]);
 			idClient++;
 		}
 	}
@@ -157,25 +164,19 @@ void Server::motdText(std::string nick, int _socket)
 {
 	std::string Motd;
 
-    Motd += ":IRC 375 " + nick + ":-" + SERVER_IP + " Message of the day - \n";
-    Motd += ":IRC 372 " + nick + ":-" + buffer + "\n";
-    Motd += ":IRC 376 " + nick + " :End of /MOTD command\n";
+	Motd += ":IRC 375 " + nick + ":-" + SERVER_IP + " Message of the day - \n";
+	Motd += ":IRC 372 " + nick + ":-" + buffer + "\n";
+	Motd += ":IRC 376 " + nick + " :End of /MOTD command\n";
 	send(new_socket[idClient], Motd.c_str(), Motd.size(), 0);
 	Motd.clear();
-    return;
+	return;
 }
 
-int Server::strq(char strq[BUFFER_SIZE])
+bool Server::checkNickClients(int q, int _socket)
 {
 	int i = 0;
-	while (strq[i] != '\n')
-		i++;
-	return (i);
-}
-
-bool Server::checkNickClients(int q, int _socket) {
-    int i = 0;
-    while (new_socket[i] != -1){
+	while (new_socket[i] != -1)
+	{
 		if (new_socket[i] == 0)
 			return (true);
 		cl = mapa.find(_socket);
