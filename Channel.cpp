@@ -2,7 +2,7 @@
 #include "Server.hpp"
 #include "Client.hpp"
 
-Channel::Channel() : numClient(0) {}
+Channel::Channel() : numClient(0), Topic("Empty") {}
 
 void Channel::setChannel(std::string nameChannel){	this->Channels = nameChannel;}
 
@@ -47,7 +47,7 @@ void Server::join(int _socket)
 				msg += commandClient[i] + " ";
 				i++;
 				if (i == 2)
-					msg += ": ";
+					msg += ":";
 			}
 			send(chan[commandClient[1]]->getAdminChannel(), msg.c_str(), msg.size(), 0);
 			error(331, _socket, 0);
@@ -82,21 +82,26 @@ void Server::privmsgChannel(int i, int _socket)
 	std::string msg;
 	char str[BUFFER_SIZE];
 	int q = 0;
+	// bzero(str, BUFFER_SIZE);
+	memset(str, 0, BUFFER_SIZE - 1);
 	while (_socket != chan[commandClient[1]]->socketClientForChannel(q))
 		q++;
 	if (_socket == chan[commandClient[1]]->socketClientForChannel(q))
 	{
-		msg += ":" + mapa[_socket]->getNickName() + "!" + chan[commandClient[1]]->getChannel() + "@" + mapa[_socket]->getIP() + " ";
+		msg += ":" + mapa[_socket]->getNickName() + "!" + mapa[_socket]->getUserName() + "@" + mapa[_socket]->getIP() + " ";
 		i = 0;
 		while (!commandClient[i].empty())
 		{
 			msg += commandClient[i] + " ";
 			i++;
 			if (i == 2)
-				msg += ": ";
+				msg += ":";
 		}
+		msg += " ";
+		msg += '\n';
+		int clientsAmount = chan[commandClient[1]]->getNumClient();
 		i = 0;
-		while (i != chan[commandClient[1]]->getNumClient())
+		while (i != clientsAmount)
 		{
 			if (chan[commandClient[1]]->socketClientForChannel(i) == _socket)
 			{
@@ -104,11 +109,15 @@ void Server::privmsgChannel(int i, int _socket)
 				continue;
 			}
 			send(chan[commandClient[1]]->socketClientForChannel(i), msg.c_str(), msg.size(), 0);
+			if (i > clientsAmount)
+				break;
 			i++;
 		}
 	}
 	else
 		error(401, _socket, 0);
+	writeCommandClient();
+	deleteCommand();
 }
 
 void Server::kick(int _socket)
@@ -151,3 +160,9 @@ void Server::kick(int _socket)
 		return;
 	}
 }
+
+
+
+
+
+

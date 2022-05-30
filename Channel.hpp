@@ -11,6 +11,7 @@ private:
 	std::string Channels;
 	std::string Password;
 	int clients[BUFFER_SIZE];
+	std::string Topic;
 	std::string nameClients[BUFFER_SIZE];
 	int numClient;
 	int adminChannel;

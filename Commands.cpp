@@ -28,7 +28,6 @@ void Server::error(int error, int _socket, int iterator)
 {
 	std::string msg;
 	int i = 0;
-	char str[BUFFER_SIZE];
 	msg = ":IRC ";
 	if (error == 451)
 		msg += "451 :You have not registered";
@@ -59,7 +58,7 @@ void Server::error(int error, int _socket, int iterator)
 		msg += "353 " + mapa[_socket]->getNickName() + "=" + chan[commandClient[1]]->getChannel() + " @";
 		while (i != chan[commandClient[1]]->getNumClient())
 		{
-			msg += mapa[chan[commandClient[1]]->socketClientForChannel(i)]->getNickName() + " ";
+			msg += mapa[chan[commandClient[1]]->socketClientForChannel(i)]->getNickName() + " ";//gavno
 			i++;
 		}
 	}
@@ -210,8 +209,11 @@ void Server::allowedCharacterJoin(int _socket)
 				writeCommandClient();
 				break;
 			}
-			else
+			else{
 				error(403, _socket, 0);
+				break ;
+			}
+
 		}
 	}
 	if (str[i] == '\n')

@@ -151,6 +151,9 @@ void Server::checkTerminal()
 		if (mapa[new_socket[idClient]]->getCheckPing() == 10000000 && mapa[new_socket[idClient]]->getOffineOnline() == 1)
 			pingServer(new_socket[idClient]);
 		idClient++;
+		res = 0;
+		while (str[res])
+			str[res++] = 0;
 	}
 }
 

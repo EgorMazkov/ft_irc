@@ -4,11 +4,12 @@
 	// Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
 	"configurations": [
+
 		{
 			"type": "lldb",
 			"request": "launch",
 			"name": "Debug",
-			"program": "/Users/ghumbert/Desktop/irc_ft 2/ircserv",
+			"program": "/Users/faggar/Ft_irc_new_git/ft_irc/ircserv",
 			"args": ["1543", "1111"],
 			"cwd": "${workspaceFolder}"
 		}

@@ -60,12 +60,6 @@ void Server::splitCommand(char *str)
 	}
 	if (str[q] == '\n' && commandClient[i - 1] != "\n")
 		commandClient[i] = '\n';
-	q = 0;
-	while (str[q])
-	{
-		str[q] = 0;
-		q++;
-	}
 }
 
 void Server::writeCommandClient()
@@ -159,5 +153,6 @@ void Server::checkCommand(char *str, int _socket, int idClient)
 	error(421, _socket, 0);
 	writeCommandClient();
 	deleteCommand();
+	i = 0;
 	return;
 }
