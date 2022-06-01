@@ -26,9 +26,10 @@ void Server::deleteCommand()
 
 void Server::error(int error, int _socket, int iterator)
 {
-	std::string msg;
+	std::string msg, msg1;
 	int i = 0;
 	msg = ":IRC ";
+	msg1 = ":";
 	if (error == 451)
 		msg += "451 :You have not registered";
 	if (error == 403)
@@ -51,19 +52,24 @@ void Server::error(int error, int _socket, int iterator)
 	}
 	if (error == 331)
 	{
-		msg += "331 " + mapa[_socket]->getNickName() + chan[commandClient[1]]->getChannel() + " :No topic is set";
+		msg1 += mapa[_socket]->getNickName() + " JOIN " + chan[commandClient[1]]->getChannel() + "\r\n";
+		send(_socket, msg1.c_str(), msg1.size(), 0);
+		//send(_socket,":ded!12@localhost JOIN #talks\r\n", strlen(":ded!12@localhost JOIN #talks\r\n"), 0);
+		msg += "332 " + mapa[_socket]->getNickName() + " " + chan[commandClient[1]]->getChannel() + " :No topic is set";
 	}
 	if (error == 353)
 	{
-		msg += "353 " + mapa[_socket]->getNickName() + "=" + chan[commandClient[1]]->getChannel() + " @";
-		while (i != chan[commandClient[1]]->getNumClient())
-		{
-			msg += mapa[chan[commandClient[1]]->socketClientForChannel(i)]->getNickName() + " ";//gavno
-			i++;
-		}
+		
+		msg += "353 " + mapa[_socket]->getNickName() + " " + chan[commandClient[1]]->getChannel() + " :" + mapa[_socket]->getNickName() + "!" + mapa[_socket]->getUserName();
+		// while (i != chan[commandClient[1]]->getNumClient())
+		// {
+		// 	msg += mapa[chan[commandClient[1]]->socketClientForChannel(i)]->getNickName() + " ";//gavno
+		// 	i++;
+		// }
+		msg += "@localhost";
 	}
 	if (error == 366)
-		msg += "366 " + mapa[_socket]->getNickName() + chan[commandClient[1]]->getChannel() + " :End of /Names list";
+		msg += "366 " + mapa[_socket]->getNickName()+ " " + chan[commandClient[1]]->getChannel() + " :End of /Names list";
 	if (error == 433)
 		msg += "433 " + commandClient[iterator] + " :Nickname is already in use";
 	if (error == 461)

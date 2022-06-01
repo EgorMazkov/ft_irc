@@ -63,7 +63,7 @@ int Server::startServer(int ac, char **av)
 	size = sizeof(server_adress);
 	std::cout << "Port: " << portServer << std::endl;
 	std::cout << "SERVER: listening clients...\n";
-	listen(socket1, 1);
+	listen(socket1, 5);
 	while (true)
 	{
 		if (allClients == 99)
@@ -118,6 +118,9 @@ void Server::checkTerminal()
 	while (new_socket[idClient] > 0)
 	{
 		res = recv(new_socket[idClient], str, BUFFER_SIZE, 0);
+		//printf("%d\n", new_socket[idClient]);
+		if (res == 0)
+			break;
 		if (res > 0)
 		{
 			if (str[res - 1] == '\n')

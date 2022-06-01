@@ -150,6 +150,10 @@ void Server::checkCommand(char *str, int _socket, int idClient)
 		pong(_socket);
 		return;
 	}
+	if (commandClient[i] == "WHO" || commandClient[i] == "PART")
+	{
+		return;
+	}
 	error(421, _socket, 0);
 	writeCommandClient();
 	deleteCommand();
